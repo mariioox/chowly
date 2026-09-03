@@ -1,21 +1,28 @@
 /* ============================================================
-   Chowly — Warm & Earthy Fine Dining Theme
+   Chowly — Light & Elegant Fine Dining Theme
    ============================================================ */
 
 :root {
-  --bg: #1a1612;
-  --bg-soft: #2a2420;
-  --bg-cream: #faf8f4;
-  --card: #fffdf9;
-  --text: #2c2418;
-  --muted: #8a7e6e;
-  --primary: #c9a94e;
-  --primary-dark: #8a6d1b;
-  --green: #6b8f5e;
-  --red: #a64d4d;
-  --blue: #6a7f8f;
-  --border: #e8e2d8;
-  --gold-glow: rgba(201, 169, 78, 0.15);
+  --bg: #f8f6f2;
+  --bg-soft: #f0ece4;
+  --bg-cream: #ffffff;
+  --card: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #3a3631;
+  --muted: #7a7267;
+  --primary: #b8962e;
+  --primary-dark: #8c7020;
+  --primary-light: #d4b44a;
+  --green: #5a7d4e;
+  --red: #9e4040;
+  --blue: #5a6f7f;
+  --border: #e8e4dc;
+  --border-light: #f0ece6;
+  --gold-glow: rgba(184, 150, 46, 0.12);
+  --gold-glow-strong: rgba(184, 150, 46, 0.22);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
   --font-serif: var(--font-serif), 'Georgia', serif;
   --font-sans: var(--font-sans), 'Lato', 'Segoe UI', Arial, sans-serif;
 }
@@ -56,16 +63,16 @@ button {
    ============================================================ */
 
 .topbar {
-  background: var(--bg);
-  color: #faf8f4;
-  padding: 18px 32px;
+  background: #ffffff;
+  color: var(--text);
+  padding: 16px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  border-bottom: 1px solid rgba(201, 169, 78, 0.2);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   position: relative;
 }
 
@@ -75,14 +82,14 @@ button {
   bottom: -1px;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: linear-gradient(
     90deg,
     transparent 0%,
     var(--primary) 50%,
     transparent 100%
   );
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
 .brand {
@@ -93,29 +100,29 @@ button {
   font-weight: 700;
   font-size: 24px;
   letter-spacing: 0.5px;
-  color: #faf8f4;
+  color: var(--text);
 }
 
 .brand .logo {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: #1a1612;
+  color: #fff;
   width: 38px;
   height: 38px;
   border-radius: 10px;
   display: grid;
   place-items: center;
   font-size: 20px;
-  box-shadow: 0 2px 8px rgba(201, 169, 78, 0.3);
+  box-shadow: 0 2px 8px rgba(184, 150, 46, 0.3);
 }
 
 .role-switch {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--bg-soft);
+  background: var(--bg);
   padding: 4px;
   border-radius: 999px;
-  border: 1px solid rgba(201, 169, 78, 0.15);
+  border: 1px solid var(--border);
 }
 
 .role-btn {
@@ -132,13 +139,13 @@ button {
 }
 
 .role-btn:hover {
-  color: #e8e2d8;
+  color: var(--text);
 }
 
 .role-btn.active {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: #1a1612;
-  box-shadow: 0 2px 10px rgba(201, 169, 78, 0.3);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(184, 150, 46, 0.3);
 }
 
 /* ============================================================
@@ -153,18 +160,18 @@ button {
 
 .card {
   background: var(--card);
-  border: 1px solid rgba(232, 226, 216, 0.6);
+  border: 1px solid var(--border-light);
   border-radius: 16px;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .card:hover {
-  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.09);
+  box-shadow: var(--shadow-md);
 }
 
 .page-title {
-  color: #faf8f4;
+  color: var(--text);
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 6px;
@@ -183,31 +190,42 @@ button {
 
 .restaurant-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .restaurant-card {
   background: var(--card);
-  border: 1px solid rgba(232, 226, 216, 0.5);
+  border: 1px solid var(--border-light);
   border-radius: 16px;
-  padding: 24px;
+  overflow: hidden;
   transition: all 0.3s ease;
   cursor: pointer;
   text-align: left;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .restaurant-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(201, 169, 78, 0.2);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(184, 150, 46, 0.15);
+}
+
+.restaurant-card .restaurant-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.restaurant-card .restaurant-info {
+  padding: 18px 20px;
 }
 
 .restaurant-card h3 {
   font-family: var(--font-serif);
   font-size: 19px;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: var(--text);
 }
 
@@ -237,22 +255,29 @@ button {
 .menu-section h2 {
   font-family: var(--font-serif);
   font-size: 18px;
-  color: var(--primary);
+  color: var(--primary-dark);
   margin: 24px 0 12px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 600;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(201, 169, 78, 0.25);
+  border-bottom: 1px solid var(--border);
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   padding: 16px 18px;
   margin-bottom: 10px;
+}
+
+.menu-item .menu-item-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .menu-item .meta {
@@ -277,6 +302,7 @@ button {
   font-weight: 700;
   font-size: 16px;
   color: var(--primary-dark);
+  white-space: nowrap;
 }
 
 .qty-box {
@@ -290,7 +316,7 @@ button {
   height: 30px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--bg-cream);
+  background: var(--bg);
   font-weight: 700;
   font-size: 16px;
   display: grid;
@@ -301,7 +327,7 @@ button {
 
 .qty-box button:hover {
   background: var(--primary);
-  color: #1a1612;
+  color: #ffffff;
   border-color: var(--primary);
 }
 
@@ -320,7 +346,7 @@ button {
   padding: 24px;
   position: sticky;
   top: 20px;
-  border-left: 2px solid rgba(201, 169, 78, 0.25);
+  border-left: 2px solid var(--gold-glow-strong);
 }
 
 .cart h2 {
@@ -335,8 +361,8 @@ button {
   justify-content: space-between;
   padding: 8px 0;
   font-size: 14px;
-  border-bottom: 1px dashed rgba(232, 226, 216, 0.8);
-  color: var(--text);
+  border-bottom: 1px dashed var(--border);
+  color: var(--text-secondary);
 }
 
 .cart .total {
@@ -391,53 +417,55 @@ button {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: #1a1612;
+  color: #ffffff;
   width: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(201, 169, 78, 0.35);
+  box-shadow: 0 4px 16px rgba(184, 150, 46, 0.35);
   filter: brightness(1.05);
 }
 
 .btn-green {
-  background: linear-gradient(135deg, var(--green), #5a7d4e);
-  color: #fffdf9;
+  background: linear-gradient(135deg, var(--green), #4a6d3e);
+  color: #ffffff;
   width: 100%;
 }
 
 .btn-green:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(107, 143, 94, 0.35);
+  box-shadow: 0 4px 16px rgba(90, 125, 78, 0.35);
   filter: brightness(1.05);
 }
 
 .btn-red {
-  background: linear-gradient(135deg, var(--red), #8e3c3c);
-  color: #fffdf9;
+  background: linear-gradient(135deg, var(--red), #863535);
+  color: #ffffff;
 }
 
 .btn-red:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(166, 77, 77, 0.35);
+  box-shadow: 0 4px 16px rgba(158, 64, 64, 0.35);
   filter: brightness(1.05);
 }
 
 .btn-blue {
-  background: linear-gradient(135deg, var(--blue), #5a6f7f);
-  color: #fffdf9;
+  background: linear-gradient(135deg, var(--blue), #4a5f6f);
+  color: #ffffff;
 }
 
 .btn-blue:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(106, 127, 143, 0.35);
+  box-shadow: 0 4px 16px rgba(90, 111, 127, 0.35);
   filter: brightness(1.05);
 }
 
 .btn-ghost {
-  background: rgba(232, 226, 216, 0.5);
-  color: var(--text);
+  background: var(--bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: rgba(232, 226, 216, 0.8);
+  background: var(--bg-soft);
+  border-color: var(--primary);
 }
 
 /* ============================================================
@@ -455,13 +483,13 @@ button {
 }
 
 .badge.placed {
-  background: #faf3e0;
-  color: #8a6d1b;
+  background: #fdf6e3;
+  color: #8c7020;
 }
 
 .badge.being_prepared {
-  background: #e8ede4;
-  color: #4a5d3a;
+  background: #e8f0e4;
+  color: #3e5a32;
 }
 
 .badge.served {
@@ -470,8 +498,8 @@ button {
 }
 
 .badge.paid {
-  background: #ede8e0;
-  color: #6b5f53;
+  background: #e8e4dc;
+  color: #5a5248;
 }
 
 /* ============================================================
@@ -539,11 +567,11 @@ select {
   border: 1px solid var(--border);
   font-size: 14px;
   margin-bottom: 8px;
-  background: var(--bg-cream);
+  background: var(--card);
   color: var(--text);
   transition: border-color 0.2s ease;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a7e6e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7267' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
@@ -574,15 +602,14 @@ select:focus {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--bg-soft);
-  color: #faf8f4;
+  background: var(--text);
+  color: #f8f6f2;
   padding: 14px 24px;
   border-radius: 12px;
   font-size: 14px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   z-index: 100;
   animation: fadeIn 0.3s ease;
-  border: 1px solid rgba(201, 169, 78, 0.2);
   border-top: 2px solid var(--primary);
 }
 
@@ -604,8 +631,8 @@ select:focus {
 .modal-wrap {
   position: fixed;
   inset: 0;
-  background: rgba(20, 16, 12, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(26, 26, 26, 0.4);
+  backdrop-filter: blur(6px);
   display: grid;
   place-items: center;
   z-index: 200;
@@ -621,8 +648,8 @@ select:focus {
   max-height: 90vh;
   overflow-y: auto;
   padding: 28px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(232, 226, 216, 0.6);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-light);
 }
 
 .modal h2 {
@@ -661,12 +688,12 @@ select:focus {
 
 .customer-option:hover {
   border-color: var(--primary);
-  background: rgba(201, 169, 78, 0.06);
+  background: rgba(184, 150, 46, 0.04);
 }
 
 .customer-option.selected {
   border-color: var(--primary);
-  background: rgba(201, 169, 78, 0.08);
+  background: rgba(184, 150, 46, 0.06);
   box-shadow: 0 0 0 3px var(--gold-glow);
 }
 
@@ -721,7 +748,7 @@ input[type="text"] {
   border: 1px solid var(--border);
   font-size: 14px;
   margin: 4px 0 14px;
-  background: var(--bg-cream);
+  background: var(--card);
   color: var(--text);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -749,7 +776,7 @@ input[type="text"]::placeholder {
 }
 
 /* ============================================================
-   Scrollbar (subtle elegance)
+   Scrollbar
    ============================================================ */
 
 ::-webkit-scrollbar {
@@ -761,12 +788,12 @@ input[type="text"]::placeholder {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(201, 169, 78, 0.3);
+  background: rgba(184, 150, 46, 0.25);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 169, 78, 0.5);
+  background: rgba(184, 150, 46, 0.45);
 }
 
 /* ============================================================
@@ -774,6 +801,6 @@ input[type="text"]::placeholder {
    ============================================================ */
 
 ::selection {
-  background: rgba(201, 169, 78, 0.3);
+  background: rgba(184, 150, 46, 0.2);
   color: var(--text);
 }

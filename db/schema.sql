@@ -27,7 +27,8 @@ create table restaurants (
   id          text primary key,
   name        text not null,
   address     text not null,
-  phone       text
+  phone       text,
+  image_url   text
 );
 
 -- 2. CUSTOMER
@@ -45,7 +46,8 @@ create table menu_items (
   name           text not null,
   item_type      text not null check (item_type in ('Food','Drink')),
   price          numeric not null default 0,
-  prep_time_mins integer not null default 0
+  prep_time_mins integer not null default 0,
+  image_url      text
 );
 
 -- 4. STAFF (was Waiter + Chef + Bartender)
@@ -104,8 +106,8 @@ create table payments (
 -- ---------- SEED DATA ----------
 -- Restaurants
 insert into restaurants values
- ('R001','Chowly Grill','12 Admiralty Way, Lekki','08012345678'),
- ('R002','Terra Kulture Restaurant','1 Tiamiyu Savage, VI','08023456789');
+ ('R001','Chowly Grill','12 Admiralty Way, Lekki','08012345678','https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop'),
+ ('R002','Terra Kulture Restaurant','1 Tiamiyu Savage, VI','08023456789','https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=400&fit=crop');
 
 -- Customers
 insert into customers values
@@ -114,15 +116,15 @@ insert into customers values
  ('C003','Tunde Bakare','08033344455','tunde.bakare@email.com');
 
 -- Menu (with prep time)
-insert into menu_items (id,restaurant_id,name,item_type,price,prep_time_mins) values
- ('M001','R001','Grilled Chicken','Food',5500,20),
- ('M002','R001','Chapman','Drink',2000,5),
- ('M003','R001','Pepper Soup','Food',6500,25),
- ('M004','R001','Zobo','Drink',1500,3),
- ('M005','R002','Jollof Rice','Food',4500,15),
- ('M006','R002','Ofada Rice','Food',6000,20),
- ('M007','R002','Chapman','Drink',2200,5),
- ('M008','R002','Fresh Orange Juice','Drink',2500,4);
+insert into menu_items (id,restaurant_id,name,item_type,price,prep_time_mins,image_url) values
+ ('M001','R001','Grilled Chicken','Food',5500,20,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
+ ('M002','R001','Chapman','Drink',2000,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
+ ('M003','R001','Pepper Soup','Food',6500,25,'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=400&fit=crop'),
+ ('M004','R001','Zobo','Drink',1500,3,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
+ ('M005','R002','Jollof Rice','Food',4500,15,'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&h=400&fit=crop'),
+ ('M006','R002','Ofada Rice','Food',6000,20,'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&h=400&fit=crop'),
+ ('M007','R002','Chapman','Drink',2200,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
+ ('M008','R002','Fresh Orange Juice','Drink',2500,4,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop');
 
 -- Staff
 insert into staff (id,restaurant_id,name,role,phone) values

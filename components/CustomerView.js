@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 import {
   getRestaurants,
   getMenu,
@@ -10,7 +11,7 @@ import {
   getOrderDetails,
   submitComplaint,
   submitPayment,
-  getPayment,
+  updateOrderStatus,
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
 
@@ -167,8 +168,9 @@ export default function CustomerView() {
   const pay = async (order) => {
     try {
       await submitPayment({ orderId: order.id, amount: order.total_amount });
+      await updateOrderStatus(order.id, { status: 'paid' });
       loadOrders();
-      toast('Payment recorded (pretend). Order is now PAID. Enjoy your meal! 🎉');
+      toast('Payment recorded. Order is now PAID. Enjoy your meal!');
     } catch (e) {
       toast('Payment failed: ' + e.message);
     }
@@ -222,8 +224,19 @@ export default function CustomerView() {
             className="restaurant-card"
             onClick={() => openRestaurant(r)}
           >
-            <h3>{r.name}</h3>
-            <div className="addr">{r.address}</div>
+            {r.image_url && (
+              <Image
+                className="restaurant-img"
+                src={r.image_url}
+                alt={r.name}
+                width={600}
+                height={400}
+              />
+            )}
+            <div className="restaurant-info">
+              <h3>{r.name}</h3>
+              <div className="addr">{r.address}</div>
+            </div>
           </button>
         ))}
       </div>
@@ -383,6 +396,15 @@ export default function CustomerView() {
 function MenuItemRow({ item, qty, add }) {
   return (
     <div className="menu-item card">
+      {item.image_url && (
+        <Image
+          className="menu-item-img"
+          src={item.image_url}
+          alt={item.name}
+          width={72}
+          height={72}
+        />
+      )}
       <div className="meta">
         <div className="name">{item.name}</div>
         <div className="desc">~{item.prep_time_mins} mins prep</div>
