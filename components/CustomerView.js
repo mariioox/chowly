@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   getRestaurants,
   getMenu,
@@ -38,6 +38,19 @@ export default function CustomerView() {
 
   const [placing, setPlacing] = useState(false);
 
+  const loadOrders = useCallback(async () => {
+    try {
+      const all = await getOrders();
+      const mine = customer
+        ? all.filter((o) => o.customer_id === customer.id)
+        : [];
+      setOrders(all);
+      setTrackingOrders(mine);
+    } catch (e) {
+      // ignore polling errors
+    }
+  }, [customer]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -50,27 +63,15 @@ export default function CustomerView() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [toast]);
 
-  // load orders for tracking + poll status
   useEffect(() => {
-    loadOrders();
-    const id = setInterval(loadOrders, 5000);
+    (async () => {
+      await loadOrders();
+    })();
+    const id = setInterval(() => loadOrders(), 5000);
     return () => clearInterval(id);
-  }, [customer]);
-
-  const loadOrders = async () => {
-    try {
-      const all = await getOrders();
-      const mine = customer
-        ? all.filter((o) => o.customer_id === customer.id)
-        : [];
-      setOrders(all);
-      setTrackingOrders(mine);
-    } catch (e) {
-      // ignore polling errors
-    }
-  };
+  }, [customer, loadOrders]);
 
   const openRestaurant = async (r) => {
     setSelectedRestaurant(r);

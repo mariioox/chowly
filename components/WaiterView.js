@@ -25,25 +25,24 @@ export default function WaiterView() {
   const [bartenderId, setBartenderId] = useState('');
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadActive();
-    const id = setInterval(loadActive, 5000);
-    return () => clearInterval(id);
-  }, []);
-
   const loadActive = async () => {
     try {
       const all = await getOrders();
       const active = all.filter((o) => ['placed', 'being_prepared'].includes(o.status));
-      setOrders((prev) => {
-        // keep currently open order's detail fresh from orders list when possible
-        return active;
-      });
+      setOrders(active);
       setLoading(false);
     } catch (e) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      await loadActive();
+    })();
+    const id = setInterval(() => loadActive(), 5000);
+    return () => clearInterval(id);
+  }, []);
 
   const openOrder = async (orderId) => {
     setOpenOrderId(orderId);

@@ -1,15 +1,17 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Lato } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const serif = Cormorant_Garamond({
+  variable: "--font-serif",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sans = Lato({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "700", "900"],
 });
 
 export const metadata = {
@@ -19,7 +21,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
       <body>
         <ToastProvider>{children}</ToastProvider>
       </body>
