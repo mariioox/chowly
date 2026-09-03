@@ -225,13 +225,15 @@ export default function CustomerView() {
             onClick={() => openRestaurant(r)}
           >
             {r.image_url && (
-              <Image
-                className="restaurant-img"
-                src={r.image_url}
-                alt={r.name}
-                width={600}
-                height={400}
-              />
+              <div className="restaurant-img-wrap">
+                <Image
+                  className="restaurant-img"
+                  src={r.image_url}
+                  alt={r.name}
+                  width={900}
+                  height={720}
+                />
+              </div>
             )}
             <div className="restaurant-info">
               <h3>{r.name}</h3>
@@ -326,7 +328,7 @@ export default function CustomerView() {
             Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
             <strong>{fmt(recentOrder.total_amount)}</strong>
           </p>
-          <p className="note">You can track it live in the section below. 🌟</p>
+          <p className="note">You can track it live in the section below.</p>
         </div>
       )}
 
@@ -395,23 +397,24 @@ export default function CustomerView() {
 
 function MenuItemRow({ item, qty, add }) {
   return (
-    <div className="menu-item card">
+    <div className="menu-item">
       {item.image_url && (
         <Image
           className="menu-item-img"
           src={item.image_url}
           alt={item.name}
-          width={72}
-          height={72}
+          width={76}
+          height={76}
         />
       )}
       <div className="meta">
         <div className="name">{item.name}</div>
-        <div className="desc">~{item.prep_time_mins} mins prep</div>
+        {item.description && <div className="desc">{item.description}</div>}
+        <div className="desc" style={{ marginTop: 4 }}>~{item.prep_time_mins} mins prep</div>
       </div>
       <div className="price">{fmt(item.price)}</div>
       {qty === 0 ? (
-        <button className="btn btn-ghost" style={{ padding: '8px 14px' }} onClick={() => add(item, 1)}>
+        <button className="btn btn-ghost" style={{ padding: '10px 18px' }} onClick={() => add(item, 1)}>
           Add
         </button>
       ) : (
@@ -439,12 +442,12 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay }) {
       <div className="actions">
         {order.status === 'being_prepared' && (
           <button className="btn btn-red" onClick={onComplain}>
-            ⚠️ Delayed? Complain & Rate
+            Delayed? Complain & Rate
           </button>
         )}
         {order.status === 'served' && (
           <button className="btn btn-green" onClick={onPay}>
-            💳 Pay — PRETEND
+            Pay — Settle Balance
           </button>
         )}
       </div>

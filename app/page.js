@@ -11,21 +11,21 @@ export default function Home() {
     <main>
       <header className="topbar">
         <div className="brand">
-          <span className="logo">🐔</span>
-          Chowly
+          <span className="brand-mark">C</span>
+          <span className="logo">Chowly</span>
         </div>
         <div className="role-switch">
           <button
             className={`role-btn ${role === 'customer' ? 'active' : ''}`}
             onClick={() => setRole('customer')}
           >
-            🍽️ Customer
+            Customer
           </button>
           <button
             className={`role-btn ${role === 'waiter' ? 'active' : ''}`}
             onClick={() => setRole('waiter')}
           >
-            🧑‍🍳 Waiter
+            Waiter
           </button>
         </div>
       </header>

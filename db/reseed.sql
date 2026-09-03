@@ -1,15 +1,9 @@
 -- =============================================================
--- CHOWLY - Production schema + seed (Supabase / Postgres SQL Editor)
--- Run this whole file in Supabase -> SQL Editor -> New query -> Run.
---
--- Adapted from the approved Entity Model with these changes (from the docs):
---   1. Waiter, Chef, Bartender merged into ONE `staff` table with a `role`
---      column. Req #3 wants "a staff list you loaded yourself" - one list
---      is cleaner and still captures the three responsibilities.
---   2. `prep_time_mins` added to menu_items so the customer's waiting time
---      can be computed (Req #1 stores a preparation time).
---   3. `status` on orders drives the whole story:
---      placed -> being_prepared -> served -> paid.
+-- CHOWLY - FULL RESEED SCRIPT
+-- Run the ENTIRE file in Supabase -> SQL Editor -> New query -> Run.
+-- This drops and rebuilds all tables with the refined luxury menu,
+-- then disables RLS so the publishable key can read/write.
+-- NOTE: Wipes all existing orders / payments / complaints.
 -- =============================================================
 
 -- Drop in dependency-safe order (safe to re-run)
@@ -51,7 +45,7 @@ create table menu_items (
   image_url      text
 );
 
--- 4. STAFF (was Waiter + Chef + Bartender)
+-- 4. STAFF (Waiter + Chef + Bartender)
 create table staff (
   id             text primary key,
   restaurant_id  text not null references restaurants(id),
@@ -105,6 +99,7 @@ create table payments (
 );
 
 -- ---------- SEED DATA ----------
+
 -- Restaurants
 insert into restaurants values
  ('R001','Chowly Grill','12 Admiralty Way, Lekki','08012345678','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=720&fit=crop'),
@@ -140,10 +135,7 @@ insert into staff (id,restaurant_id,name,role,phone) values
  ('W009','R002','Rita Danjuma','Bartender','08011100099');
 
 -- ---------- ACCESS ----------
--- No logins are required (the assignment says a simple role switch is enough),
--- so the app reads/writes directly with the key in the browser.
--- The simplest secure-enough setup for this assignment: turn RLS off on all
--- tables so the publishable key can read and write without policies.
+-- Turn RLS off on all tables so the publishable (anon) key can read/write.
 alter table restaurants      disable row level security;
 alter table customers        disable row level security;
 alter table menu_items       disable row level security;

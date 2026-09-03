@@ -1,4 +1,4 @@
-import { Cormorant_Garamond, Lato } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 
@@ -8,10 +8,10 @@ const serif = Cormorant_Garamond({
   weight: ["400", "500", "600", "700"],
 });
 
-const sans = Lato({
+const sans = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
+  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata = {

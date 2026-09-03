@@ -134,7 +134,7 @@ export default function WaiterView() {
               <div className="amount">{fmt(o.total_amount)}</div>
               <div className="actions">
                 <button className="btn btn-blue" onClick={() => openOrder(o.id)}>
-                  Open Order →
+                  Open Order
                 </button>
               </div>
             </div>
