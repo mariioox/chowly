@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import ImageWithFallback from '@/components/ImageWithFallback';
+import OrderTimeline from '@/components/OrderTimeline';
 import {
   getRestaurants,
   getMenu,
@@ -536,6 +537,7 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay }) {
         Waiting: <strong>~{order.waiting_time ?? '—'} mins</strong>
       </div>
       {order.notes && <div className="request-chip">✎ {order.notes}</div>}
+      <OrderTimeline status={order.status} />
       <div className="amount">{fmt(order.total_amount)}</div>
       <div className="actions">
         {order.status === 'being_prepared' && (

@@ -1032,6 +1032,99 @@ input[type="text"]::placeholder {
 }
 
 /* ============================================================
+   Order status timeline
+   ============================================================ */
+
+.timeline {
+  margin: var(--space-2) 0;
+  user-select: none;
+}
+
+.timeline-track {
+  position: relative;
+  height: 3px;
+  background: var(--border-light);
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.timeline-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-soft), var(--primary));
+  border-radius: 999px;
+}
+
+.timeline-stops {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin-top: -6px;
+}
+
+.timeline-stop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--border);
+  box-shadow: 0 0 0 2px var(--bg);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.timeline-dot.done {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.timeline-dot.current {
+  border-color: var(--primary);
+  animation: timelinePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes timelinePulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+  50% { box-shadow: 0 0 0 6px var(--gold-glow); }
+}
+
+.timeline-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.timeline-dot.done + .timeline-label {
+  color: var(--text-secondary);
+}
+
+.timeline-dot.current + .timeline-label {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.timeline-compact .timeline-stops {
+  margin-top: -6px;
+}
+
+.timeline-compact .timeline-dot {
+  width: 9px;
+  height: 9px;
+}
+
+/* ============================================================
    Focus visibility (keyboard)
    ============================================================ */
 
