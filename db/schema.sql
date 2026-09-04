@@ -72,7 +72,10 @@ create table orders (
                     check (status in ('placed','being_prepared','served','paid')),
   waiting_time    integer,
   total_amount    numeric not null default 0,
-  created_at      timestamptz default now()
+  vat_amount      numeric not null default 0,
+  notes           text,
+  created_at      timestamptz default now(),
+  updated_at      timestamptz default now()
 );
 
 -- 6. ORDER_ITEM (M:M bridge Order <-> MenuItem)
