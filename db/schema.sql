@@ -119,16 +119,30 @@ insert into customers values
  ('C002','Amaka Obi','08022233344','amaka.obi@email.com'),
  ('C003','Tunde Bakare','08033344455','tunde.bakare@email.com');
 
--- Menu (fine-dining Nigerian menu, refined names + descriptions)
+-- Menu (clear names + photos that match each dish; shared across restaurants)
 insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_time_mins,image_url) values
- ('M001','R001','Suya-Glazed Free-Range Chicken','Fire-roasted free-range chicken, smoked suya rub, charred citrus supremes, Scotch-bonnet oil','Food',18500,20,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
- ('M002','R001','Antiquarian Chapman','Hibiscus-citrus aperitif, Angostura bitters, toasted-clove smoke, candied ginger','Drink',6500,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
- ('M003','R001','Uziza-Braised Goat Consommé','Six-hour braised goat consommé, fresh uziza leaf, grains of paradise, palm-oil emulsion','Food',22000,25,'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=400&fit=crop'),
- ('M004','R001','Zobo & Star-Anise Tonic','Chilled hibiscus infusion, ginger, star anise, orange-blossom mist','Drink',4500,3,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
- ('M005','R002','Smoked Jollof, Grilled Prawn & Burnt Lemon','Scented basmati, fire-toasted tomatoes, Scotch-bonnet jus, grilled prawn, burnt lemon','Food',16500,15,'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&h=400&fit=crop'),
- ('M006','R002','Heritage Ofada & Assorted Meats','Ancestral unpolished rice, assorted pepper suya, aged palm-oil stew, plantain crisp','Food',21000,20,'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&h=400&fit=crop'),
- ('M007','R002','Vintage Chapman Édition','House bitter base, fresh citrus, infusions of the day, smoked-demerara rim','Drink',6800,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
- ('M008','R002','Cold-Pressed Valencia & Orange Blossom','Hand-picked Valencia oranges, chilled to order, orange-blossom mist','Drink',7500,4,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop');
+ ('M101','R001','BBQ Beef Ribs','Slow-cooked beef ribs, sticky barbecue glaze, smoky char','Food',24500,20,'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=400&fit=crop'),
+ ('M102','R001','Grilled Chicken','Marinated grilled chicken, charred edges, garlic herb butter','Food',18500,18,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
+ ('M103','R001','Classic Beef Burger','100% beef patty, melted cheddar, lettuce, tomato, house sauce','Food',15500,12,'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop'),
+ ('M104','R001','Margherita Pizza','San Marzano tomato, fresh mozzarella, basil, wood-fired crust','Food',17000,15,'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=400&fit=crop'),
+ ('M105','R001','Garden Salad','Mixed greens, cherry tomatoes, cucumber, balsamic dressing','Food',9500,8,'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop'),
+ ('M106','R001','Pepper Soup','Spicy peppery broth, tender meat, native herbs, warming heat','Food',12000,20,'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=400&fit=crop'),
+ ('M107','R001','Grilled Salmon','Seared salmon fillet, lemon butter, fresh herbs','Food',26500,22,'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=400&fit=crop'),
+ ('M108','R001','House Chapman','Classic layered citrus mocktail with bitters and a fruity finish','Drink',5500,4,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
+ ('M109','R001','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
+ ('M110','R001','Zobo Drink','Chilled hibiscus infusion, ginger, lightly sweetened','Drink',4000,4,'https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=400&h=400&fit=crop'),
+ ('M111','R001','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop'),
+ ('M201','R002','BBQ Beef Ribs','Slow-cooked beef ribs, sticky barbecue glaze, smoky char','Food',24500,20,'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=400&fit=crop'),
+ ('M202','R002','Grilled Chicken','Marinated grilled chicken, charred edges, garlic herb butter','Food',18500,18,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
+ ('M203','R002','Classic Beef Burger','100% beef patty, melted cheddar, lettuce, tomato, house sauce','Food',15500,12,'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop'),
+ ('M204','R002','Margherita Pizza','San Marzano tomato, fresh mozzarella, basil, wood-fired crust','Food',17000,15,'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=400&fit=crop'),
+ ('M205','R002','Garden Salad','Mixed greens, cherry tomatoes, cucumber, balsamic dressing','Food',9500,8,'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop'),
+ ('M206','R002','Pepper Soup','Spicy peppery broth, tender meat, native herbs, warming heat','Food',12000,20,'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=400&fit=crop'),
+ ('M207','R002','Grilled Salmon','Seared salmon fillet, lemon butter, fresh herbs','Food',26500,22,'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=400&fit=crop'),
+ ('M208','R002','House Chapman','Classic layered citrus mocktail with bitters and a fruity finish','Drink',5500,4,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
+ ('M209','R002','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
+ ('M210','R002','Zobo Drink','Chilled hibiscus infusion, ginger, lightly sweetened','Drink',4000,4,'https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=400&h=400&fit=crop'),
+ ('M211','R002','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop');
 
 -- Staff
 insert into staff (id,restaurant_id,name,role,phone) values
