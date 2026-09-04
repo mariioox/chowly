@@ -32,6 +32,8 @@ export default function CustomerView() {
   const [trackingOrders, setTrackingOrders] = useState([]);
   const [orders, setOrders] = useState([]);
 
+  const [notes, setNotes] = useState('');
+
   const [complainOrder, setComplainOrder] = useState(null);
   const [rating, setRating] = useState(1);
   const [complaintText, setComplaintText] = useState('');
@@ -94,6 +96,7 @@ export default function CustomerView() {
     setSelectedRestaurant(null);
     setMenu([]);
     setCart({});
+    setNotes('');
   };
 
   const add = (item, delta) => {
@@ -137,9 +140,11 @@ export default function CustomerView() {
         totalAmount,
         waitingTime,
         vatAmount: vat.vat,
+        notes: notes.trim() || null,
       });
       setRecentOrder(order);
       setCart({});
+      setNotes('');
       toast('Order placed! Waiting time ~' + waitingTime + ' mins');
       loadOrders();
     } catch (e) {
@@ -342,6 +347,17 @@ export default function CustomerView() {
                   Menu prices include {Math.round(VAT_RATE * 100)}% VAT · Est. waiting ~
                   {waitingTime} mins
                 </div>
+                <label className="field-label u-mt16" htmlFor="order-notes">
+                  Special requests
+                </label>
+                <textarea
+                  id="order-notes"
+                  rows={2}
+                  maxLength={280}
+                  placeholder="Allergies, spice level, sitting preferences…"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
                 <div className="u-mt16">
                   <button className="btn btn-primary" disabled={placing} onClick={submitOrder}>
                     {placing ? 'Placing…' : 'Submit Order'}
@@ -386,6 +402,9 @@ export default function CustomerView() {
           <p className="note">
             Track it live below — switch to the Waiter view to start prep.
           </p>
+          {recentOrder.notes && (
+            <p className="note request-note">Request: {recentOrder.notes}</p>
+          )}
         </div>
       )}
 
@@ -516,6 +535,7 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay }) {
       <div className="wait">
         Waiting: <strong>~{order.waiting_time ?? '—'} mins</strong>
       </div>
+      {order.notes && <div className="request-chip">✎ {order.notes}</div>}
       <div className="amount">{fmt(order.total_amount)}</div>
       <div className="actions">
         {order.status === 'being_prepared' && (
