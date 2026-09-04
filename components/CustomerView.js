@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import OrderTimeline from '@/components/OrderTimeline';
 import {
@@ -10,6 +11,7 @@ import {
   placeOrder,
   getOrders,
   getOrderDetails,
+  getPayment,
   submitComplaint,
   submitPayment,
   updateOrderStatus,
@@ -36,10 +38,12 @@ export default function CustomerView() {
   const [notes, setNotes] = useState('');
 
   const [complainOrder, setComplainOrder] = useState(null);
+  const [receiptOrder, setReceiptOrder] = useState(null);
   const [rating, setRating] = useState(1);
   const [complaintText, setComplaintText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const complainTitleRef = useModal(complainOrder !== null, () => setComplainOrder(null));
+  const receiptFocusRef = useModal(receiptOrder !== null, () => setReceiptOrder(null));
 
   const [placing, setPlacing] = useState(false);
 
@@ -182,12 +186,23 @@ export default function CustomerView() {
 
   const pay = async (order) => {
     try {
-      await submitPayment({ orderId: order.id, amount: order.total_amount });
+      const payment = await submitPayment({ orderId: order.id, amount: order.total_amount });
       await updateOrderStatus(order.id, { status: 'paid' });
       loadOrders();
-      toast('Payment recorded. Order is now PAID. Enjoy your meal!');
+      toast('Payment recorded. Order is now PAID.');
+      const detail = await getOrderDetails(order.id);
+      setReceiptOrder({ ...detail, paid_at: payment?.paid_at });
     } catch (e) {
       toast('Payment failed: ' + e.message);
+    }
+  };
+
+  const viewReceipt = async (order) => {
+    try {
+      const [detail, payment] = await Promise.all([getOrderDetails(order.id), getPayment(order.id)]);
+      setReceiptOrder({ ...detail, paid_at: payment?.paid_at });
+    } catch (e) {
+      toast('Could not load receipt: ' + e.message);
     }
   };
 
@@ -424,6 +439,7 @@ export default function CustomerView() {
               fmt={fmt}
               onComplain={() => openComplain(o)}
               onPay={() => pay(o)}
+              onViewReceipt={() => viewReceipt(o)}
             />
           ))}
         </div>
@@ -490,6 +506,99 @@ export default function CustomerView() {
           </div>
         </div>
       )}
+
+      {/* Receipt modal */}
+      {receiptOrder && (
+        <AnimatePresence>
+          <motion.div
+            className="modal-wrap modal-wrap-motion"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setReceiptOrder(null);
+            }}
+          >
+            <motion.div
+              className="modal receipt"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="receipt-title"
+              initial={{ y: 28, scale: 0.96, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 16, scale: 0.97, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 26 }}
+            >
+              <div className="receipt-head">
+                <h2 id="receipt-title" tabIndex={-1} ref={receiptFocusRef} className="sr-only">
+                  Receipt for order {shortId(receiptOrder.id)}
+                </h2>
+                <span className="label receipt-label">Receipt</span>
+                <div className="receipt-brand">Chowly</div>
+                <div className="sub">
+                  {receiptOrder.restaurants?.name} · {receiptOrder.customers?.name}
+                </div>
+              </div>
+              <div className="receipt-rule" />
+              <div className="receipt-meta">
+                <span>Order {shortId(receiptOrder.id)}</span>
+                <span>
+                  {receiptOrder.paid_at || receiptOrder.updated_at || receiptOrder.created_at
+                    ? new Date(
+                        receiptOrder.paid_at || receiptOrder.updated_at || receiptOrder.created_at
+                      ).toLocaleString()
+                    : ''}
+                </span>
+              </div>
+              <div className="receipt-items">
+                {receiptOrder.order_items?.map((it) => (
+                  <div className="line" key={it.id}>
+                    <span>
+                      {it.menu_items?.name}
+                      <em className="receipt-qty"> ×{it.quantity}</em>
+                    </span>
+                    <span>{fmt(it.subtotal)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="receipt-totals">
+                <div className="line vat-line">
+                  <span>Subtotal (excl. VAT)</span>
+                  <span>
+                    {fmt(
+                      receiptOrder.total_amount -
+                        (receiptOrder.vat_amount ?? splitVat(receiptOrder.total_amount).vat)
+                    )}
+                  </span>
+                </div>
+                <div className="line vat-line">
+                  <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
+                  <span>
+                    {fmt(receiptOrder.vat_amount ?? splitVat(receiptOrder.total_amount).vat)}
+                  </span>
+                </div>
+                <div className="line total">
+                  <span>Total</span>
+                  <strong>{fmt(receiptOrder.total_amount)}</strong>
+                </div>
+              </div>
+              <div className="receipt-stamp">Paid</div>
+              <div className="receipt-thanks">
+                Thank you for dining with {receiptOrder.restaurants?.name}.
+              </div>
+              <div className="u-mt16">
+                <button
+                  className="btn btn-ghost"
+                  style={{ width: '100%' }}
+                  onClick={() => setReceiptOrder(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }
@@ -526,7 +635,7 @@ function MenuItemRow({ item, qty, add }) {
   );
 }
 
-function OrderCard({ order, statusLabel, fmt, onComplain, onPay }) {
+function OrderCard({ order, statusLabel, fmt, onComplain, onPay, onViewReceipt }) {
   return (
     <div className="order-card card">
       <div className="head">
@@ -548,6 +657,11 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay }) {
         {order.status === 'served' && (
           <button className="btn btn-green" onClick={onPay}>
             Pay — Settle Balance
+          </button>
+        )}
+        {order.status === 'paid' && (
+          <button className="btn btn-ghost" onClick={onViewReceipt}>
+            View Receipt
           </button>
         )}
       </div>
