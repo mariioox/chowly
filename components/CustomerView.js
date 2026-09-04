@@ -310,7 +310,7 @@ export default function CustomerView() {
               ) : (
                 <>
                   <div className="menu-section">
-                    <h2>Food</h2>
+                    <h2>Mains</h2>
                     {menu
                       .filter((m) => m.item_type === 'Food')
                       .map((item) => (
@@ -323,7 +323,7 @@ export default function CustomerView() {
                       ))}
                   </div>
                   <div className="menu-section">
-                    <h2>Drinks</h2>
+                    <h2>Beverages</h2>
                     {menu
                       .filter((m) => m.item_type === 'Drink')
                       .map((item) => (
