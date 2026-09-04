@@ -112,7 +112,7 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
 1. Open the deployed link. You land on the **Customer** view.
 2. **Step 1** — pick a customer (e.g. "Ade Johnson").
 3. **Step 2** — choose a restaurant, e.g. **Chowly Grill**.
-4. Add some items — e.g. Grilled Chicken and a House Chapman. Watch your cart, the VAT breakdown and the estimate update. Optionally add a special request.
+4. Add some items — e.g. Grilled Chicken and a Fresh Orange Juice. Watch your cart, the VAT breakdown and the estimate update. Optionally add a special request.
 5. Tap **Submit Order**. Note your order id and waiting time.
 6. Switch to the **Waiter** role using the toggle at the top right.
 7. Your order is listed in the service queue. Open it, assign a waiter, chef and bartender, then **Assign & Start Prep** — watch its readiness countdown start.
