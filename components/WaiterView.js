@@ -10,11 +10,14 @@ import {
 import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
 import { fmt, shortId } from '@/lib/format';
+import OrderTimeline from '@/components/OrderTimeline';
 
 export default function WaiterView() {
   const toast = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [now, setNow] = useState(() => Date.now());
 
   const [openOrderId, setOpenOrderId] = useState(null);
   const [orderDetail, setOrderDetail] = useState(null);
@@ -41,6 +44,11 @@ export default function WaiterView() {
       await loadActive();
     })();
     const id = setInterval(() => loadActive(), 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -105,8 +113,33 @@ export default function WaiterView() {
 
   const statusLabel = {
     placed: 'placed',
-    being_prepared: 'being prepared',
+    being_prepared: 'in prep',
   };
+
+  const deadlineFor = (o) => {
+    const base =
+      o.status === 'being_prepared' && o.updated_at ? o.updated_at : o.created_at;
+    const t = base ? new Date(base).getTime() : now;
+    return t + (Number(o.waiting_time) || 0) * 60000;
+  };
+
+  const timeLeft = (o) => {
+    const ms = deadlineFor(o) - now;
+    return { ms, overdue: ms < 0 };
+  };
+
+  const fmtClock = (ms) => {
+    const s = Math.max(0, Math.floor(Math.abs(ms) / 1000));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
+  };
+
+  const placedCount = orders.filter((o) => o.status === 'placed').length;
+  const prepCount = orders.filter((o) => o.status === 'being_prepared').length;
+  const overdueCount = orders.filter(
+    (o) => o.status === 'being_prepared' && timeLeft(o).overdue
+  ).length;
 
   if (loading) {
     return (
@@ -129,29 +162,56 @@ export default function WaiterView() {
 
   return (
     <div className="container">
-      <h1 className="page-title">Waiter Dashboard</h1>
-      <p className="page-sub">Incoming orders. Open one, assign the kitchen staff, mark served.</p>
+      <div className="svc-bar">
+        <div className="svc-bar-title">
+          <span className="label">Service queue</span>
+          <div className="svc-clock">{new Date(now).toLocaleTimeString()}</div>
+        </div>
+        <div className="svc-chips">
+          <span className="svc-chip">{placedCount} placed</span>
+          <span className="svc-chip prep">{prepCount} in prep</span>
+          <span className={`svc-chip ${overdueCount ? 'danger' : ''}`}>
+            {overdueCount} overdue
+          </span>
+        </div>
+      </div>
 
       {orders.length === 0 ? (
         <div className="card empty">No incoming orders right now. New orders will appear here.</div>
       ) : (
         <div className="order-grid">
-          {orders.map((o) => (
-            <div key={o.id} className="order-card card">
-              <div className="head">
-                <span className="oid">{shortId(o.id)}</span>
-                <span className={`badge ${o.status}`}>{statusLabel[o.status]}</span>
+          {orders.map((o) => {
+            const { ms, overdue } = timeLeft(o);
+            const inPrep = o.status === 'being_prepared';
+            return (
+              <div
+                key={o.id}
+                className={`order-card card svc-card ${inPrep && overdue ? 'svc-card-danger' : ''}`}
+              >
+                <div className="head">
+                  <span className="oid">{shortId(o.id)}</span>
+                  <span className={`badge ${o.status}`}>{statusLabel[o.status]}</span>
+                </div>
+                <div className="wait">Customer: <strong>{o.customers?.name}</strong></div>
+                {inPrep ? (
+                  <div className={`prep-timer ${overdue ? 'overdue' : ''}`}>
+                    <span className="prep-label">{overdue ? 'Overdue by' : 'Ready in'}</span>
+                    <strong>{fmtClock(ms)}</strong>
+                  </div>
+                ) : (
+                  <div className="wait">Est. prep: <strong>~{o.waiting_time ?? '—'} mins</strong></div>
+                )}
+                {o.notes && <div className="request-chip">✎ {o.notes}</div>}
+                <OrderTimeline status={o.status} compact />
+                <div className="amount">{fmt(o.total_amount)}</div>
+                <div className="actions">
+                  <button className="btn btn-blue" onClick={() => openOrder(o.id)}>
+                    Open Order
+                  </button>
+                </div>
               </div>
-              <div className="wait">Customer: <strong>{o.customers?.name}</strong></div>
-              <div className="wait">Waiting: {o.waiting_time ?? '—'} mins</div>
-              <div className="amount">{fmt(o.total_amount)}</div>
-              <div className="actions">
-                <button className="btn btn-blue" onClick={() => openOrder(o.id)}>
-                  Open Order
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -187,6 +247,22 @@ export default function WaiterView() {
                 <span>{fmt(it.subtotal)}</span>
               </div>
             ))}
+
+            {orderDetail.status === 'being_prepared' && (
+              <div className={`prep-timer ${timeLeft(orderDetail).overdue ? 'overdue' : ''}`}>
+                <span className="prep-label">
+                  {timeLeft(orderDetail).overdue ? 'Overdue by' : 'Ready in'}
+                </span>
+                <strong>{fmtClock(timeLeft(orderDetail).ms)}</strong>
+              </div>
+            )}
+
+            {orderDetail.notes && (
+              <>
+                <span className="field-label">Special request</span>
+                <div className="request-chip">✎ {orderDetail.notes}</div>
+              </>
+            )}
 
             <span className="field-label">Waiter</span>
             <select value={waiterId} onChange={(e) => setWaiterId(e.target.value)}>

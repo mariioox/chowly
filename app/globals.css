@@ -640,6 +640,111 @@ button {
 }
 
 /* ============================================================
+   Waiter service pad
+   ============================================================ */
+
+.svc-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.svc-bar-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.svc-clock {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.svc-chips {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.svc-chip {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.svc-chip.prep {
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  border-color: transparent;
+}
+
+.svc-chip.danger {
+  color: #ffffff;
+  background: var(--red);
+  border-color: transparent;
+}
+
+.svc-card {
+  position: relative;
+}
+
+.svc-card-danger {
+  border-color: rgba(162, 100, 90, 0.45);
+  box-shadow: 0 0 0 3px rgba(162, 100, 90, 0.08), var(--shadow-sm);
+}
+
+.prep-timer {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: var(--space-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.prep-timer .prep-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+
+.prep-timer strong {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--green);
+}
+
+.prep-timer.overdue strong {
+  color: var(--red);
+}
+
+.prep-timer.overdue .prep-label {
+  color: var(--red);
+}
+
+.modal .request-chip {
+  white-space: normal;
+  display: inline-block;
+}
+
+/* ============================================================
    Select & Form
    ============================================================ */
 
