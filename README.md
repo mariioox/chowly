@@ -28,8 +28,7 @@ Next.js 16 (App Router, React 19) · Supabase (PostgreSQL) · Framer Motion · d
    NEXT_PUBLIC_SUPABASE_URL=...
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
    ```
-3. **Database:** run `db/schema.sql` (fresh setup) or `db/reseed.sql` (reset everything) in the
-   Supabase SQL Editor.
+3. **Database:** run `db/schema.sql` in the Supabase SQL Editor (creates the tables and seeds the data).
 4. **Run:** `npm run dev` → http://localhost:3000
 
 ## Deployment

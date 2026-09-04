@@ -33,7 +33,6 @@ chowly/
     format.js            # money formatting, short order ids, VAT helper (splitVat)
   db/
     schema.sql           # the final schema + seed data (run in Supabase SQL Editor)
-    migrations/001_extend_orders.sql  # non-destructive ALTER adding vat_amount, notes, updated_at to orders
   .env.local             # holds the Supabase URL + publishable key (git-ignored)
 ```
 
@@ -45,7 +44,7 @@ The original approved entity model (Restaurant, Customer, MenuItem, Waiter, Chef
 
 So the final tables are: `restaurants`, `customers`, `menu_items`, `staff`, `orders`, `order_items` (the M:M bridge), `complaints`, and `payments`. RLS is disabled on all tables because the assignment explicitly does not require logins — a simple role switch is enough.
 
-Mid-build polish added three columns to `orders` (`vat_amount`, `notes`, `updated_at`) plus a **5% VAT** rule: menu prices are including VAT, and the cart/confirmation/receipt break out **Subtotal (excl. VAT) → VAT (5%) → Total incl. VAT**. The order records the exact computed VAT amount so it can be shown again later. An **optional special-request note** is saved with each order (`notes`), a **prep timestamp** (`updated_at`) is stamped every time the status changes, and live prep deadlines are derived from it. Unordered columns always fall back to a computed value, so the app still works on a database that has not been migrated yet.
+Mid-build polish added three columns to `orders` (`vat_amount`, `notes`, `updated_at`) plus a **5% VAT** rule: menu prices are including VAT, and the cart/confirmation/receipt break out **Subtotal (excl. VAT) → VAT (5%) → Total incl. VAT**. The order records the exact computed VAT amount so it can be shown again later. An **optional special-request note** is saved with each order (`notes`), a **prep timestamp** (`updated_at`) is stamped every time the status changes, and live prep deadlines are derived from it. Every query falls back to a computed value when a column is absent, so the app stays robust.
 
 ### How the application was deployed
 1. The Next.js app is pushed to a **GitHub** repository.
@@ -54,8 +53,7 @@ Mid-build polish added three columns to `orders` (`vat_amount`, `notes`, `update
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 4. The Supabase schema + seed were applied from `db/schema.sql` in the Supabase SQL Editor.
-5. On deployed databases created before the polish phase, run `db/migrations/001_extend_orders.sql` in the Supabase SQL Editor once — it adds the `vat_amount`, `notes` and `updated_at` columns non-destructively.
-6. Deployment produces a live public URL.
+5. Deployment produces a live public URL.
 
 ---
 
