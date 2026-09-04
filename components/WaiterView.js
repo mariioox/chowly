@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   getOrders,
   getOrderDetails,
@@ -11,6 +12,7 @@ import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
 import { fmt, shortId } from '@/lib/format';
 import OrderTimeline from '@/components/OrderTimeline';
+import Reveal from '@/components/Reveal';
 
 export default function WaiterView() {
   const toast = useToast();
@@ -162,31 +164,38 @@ export default function WaiterView() {
 
   return (
     <div className="container">
-      <div className="svc-bar">
-        <div className="svc-bar-title">
-          <span className="label">Service queue</span>
-          <div className="svc-clock">{new Date(now).toLocaleTimeString()}</div>
+      <Reveal>
+        <div className="svc-bar">
+          <div className="svc-bar-title">
+            <span className="label">Service queue</span>
+            <div className="svc-clock">{new Date(now).toLocaleTimeString()}</div>
+          </div>
+          <div className="svc-chips">
+            <span className="svc-chip">{placedCount} placed</span>
+            <span className="svc-chip prep">{prepCount} in prep</span>
+            <span className={`svc-chip ${overdueCount ? 'danger' : ''}`}>
+              {overdueCount} overdue
+            </span>
+          </div>
         </div>
-        <div className="svc-chips">
-          <span className="svc-chip">{placedCount} placed</span>
-          <span className="svc-chip prep">{prepCount} in prep</span>
-          <span className={`svc-chip ${overdueCount ? 'danger' : ''}`}>
-            {overdueCount} overdue
-          </span>
-        </div>
-      </div>
+      </Reveal>
 
       {orders.length === 0 ? (
         <div className="card empty">No incoming orders right now. New orders will appear here.</div>
       ) : (
         <div className="order-grid">
+          <AnimatePresence initial={false}>
           {orders.map((o) => {
             const { ms, overdue } = timeLeft(o);
             const inPrep = o.status === 'being_prepared';
             return (
-              <div
+              <motion.div
                 key={o.id}
                 className={`order-card card svc-card ${inPrep && overdue ? 'svc-card-danger' : ''}`}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="head">
                   <span className="oid">{shortId(o.id)}</span>
@@ -205,32 +214,45 @@ export default function WaiterView() {
                 <OrderTimeline status={o.status} compact />
                 <div className="amount">{fmt(o.total_amount)}</div>
                 <div className="actions">
-                  <button className="btn btn-blue" onClick={() => openOrder(o.id)}>
+                  <motion.button
+                    className="btn btn-blue"
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => openOrder(o.id)}
+                  >
                     Open Order
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
+          </AnimatePresence>
         </div>
       )}
 
-      {orderDetail && (
-        <div
-          className="modal-wrap"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) closeModal();
-          }}
-        >
-          <div
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="order-modal-title"
+      <AnimatePresence>
+        {orderDetail && (
+          <motion.div
+            className="modal-wrap modal-wrap-motion"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) closeModal();
+            }}
           >
-            <h2 id="order-modal-title" tabIndex={-1} ref={modalFocusRef}>
-              Order {shortId(orderDetail.id)}
-            </h2>
+            <motion.div
+              className="modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="order-modal-title"
+              initial={{ y: 24, scale: 0.96, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 12, scale: 0.97, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 26 }}
+            >
+              <h2 id="order-modal-title" tabIndex={-1} ref={modalFocusRef}>
+                Order {shortId(orderDetail.id)}
+              </h2>
             <div className="sub">
               {orderDetail.restaurants?.name} · Customer: {orderDetail.customers?.name} ·{' '}
               {fmt(orderDetail.total_amount)}
@@ -303,9 +325,10 @@ export default function WaiterView() {
                 </button>
               )}
             </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

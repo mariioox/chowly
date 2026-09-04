@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import OrderTimeline from '@/components/OrderTimeline';
+import Reveal from '@/components/Reveal';
 import {
   getRestaurants,
   getMenu,
@@ -238,96 +239,105 @@ export default function CustomerView() {
   return (
     <div className="container">
       {/* Step 1: who is ordering */}
-      <h1 className="page-title">Customer Dining Experience</h1>
-      <p className="page-sub">
-        Act as a customer: pick who you are, choose a restaurant, order, track and pay.
-      </p>
+      <Reveal className="view-head">
+        <span className="eyebrow">Chowly · Table Service</span>
+        <h1 className="page-title">Customer Dining Experience</h1>
+        <p className="page-sub">
+          Act as a customer: pick who you are, choose a restaurant, order, track and pay.
+        </p>
+      </Reveal>
 
-      <div className="card u-pad u-mb24">
-        <span className="label">Step 1 — Who is the customer?</span>
-        <div className="customer-select">
-          {customers.map((c) => (
+      <Reveal delay={0.05}>
+        <div className="card u-pad u-mb24">
+          <span className="label">Step 1 — Who is the customer?</span>
+          <div className="customer-select">
+            {customers.map((c) => (
+              <button
+                key={c.id}
+                className={`customer-option ${customer?.id === c.id ? 'selected' : ''}`}
+                onClick={() => setCustomer(c)}
+              >
+                <span className="nm">{c.name}</span>
+                <div className="em">{c.email}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Step 2: choose restaurant */}
+      <Reveal delay={0.1}>
+        <span className="label">Step 2 — Choose a restaurant</span>
+        <div className="restaurant-grid" style={{ marginBottom: 24 }}>
+          {restaurants.map((r) => (
             <button
-              key={c.id}
-              className={`customer-option ${customer?.id === c.id ? 'selected' : ''}`}
-              onClick={() => setCustomer(c)}
+              key={r.id}
+              className={`restaurant-card ${selectedRestaurant?.id === r.id ? 'selected' : ''}`}
+              onClick={() => openRestaurant(r)}
             >
-              <span className="nm">{c.name}</span>
-              <div className="em">{c.email}</div>
+              <div className="restaurant-img-wrap">
+                <ImageWithFallback
+                  className="restaurant-img"
+                  src={r.image_url}
+                  alt={r.name}
+                  fallbackText={r.name.charAt(0)}
+                  width={900}
+                  height={720}
+                />
+              </div>
+              <div className="restaurant-info">
+                <h3>{r.name}</h3>
+                <div className="addr">{r.address}</div>
+              </div>
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Step 2: choose restaurant */}
-      <span className="label">Step 2 — Choose a restaurant</span>
-      <div className="restaurant-grid" style={{ marginBottom: 24 }}>
-        {restaurants.map((r) => (
-          <button
-            key={r.id}
-            className={`restaurant-card ${selectedRestaurant?.id === r.id ? 'selected' : ''}`}
-            onClick={() => openRestaurant(r)}
-          >
-            <div className="restaurant-img-wrap">
-              <ImageWithFallback
-                className="restaurant-img"
-                src={r.image_url}
-                alt={r.name}
-                fallbackText={r.name.charAt(0)}
-                width={900}
-                height={720}
-              />
-            </div>
-            <div className="restaurant-info">
-              <h3>{r.name}</h3>
-              <div className="addr">{r.address}</div>
-            </div>
-          </button>
-        ))}
-      </div>
+      </Reveal>
 
       {/* Step 3: menu + cart */}
       {selectedRestaurant ? (
         <div className="menu-layout">
           <div>
-            <div className="menu-head">
-              <h1 className="page-title">{selectedRestaurant.name} — Menu</h1>
-              <button className="btn btn-ghost" onClick={closeMenu}>
-                ← Change restaurant
-              </button>
-            </div>
-            {!menu.length ? (
-              <div className="card empty">No menu items found for this restaurant.</div>
-            ) : (
-              <>
-                <div className="menu-section">
-                  <h2>Food</h2>
-                  {menu
-                    .filter((m) => m.item_type === 'Food')
-                    .map((item) => (
-                      <MenuItemRow
-                        key={item.id}
-                        item={item}
-                        qty={cart[item.id] || 0}
-                        add={add}
-                      />
-                    ))}
-                </div>
-                <div className="menu-section">
-                  <h2>Drinks</h2>
-                  {menu
-                    .filter((m) => m.item_type === 'Drink')
-                    .map((item) => (
-                      <MenuItemRow
-                        key={item.id}
-                        item={item}
-                        qty={cart[item.id] || 0}
-                        add={add}
-                      />
-                    ))}
-                </div>
-              </>
-            )}
+            <Reveal y={14}>
+              <div className="menu-head">
+                <h1 className="page-title">{selectedRestaurant.name} — Menu</h1>
+                <button className="btn btn-ghost" onClick={closeMenu}>
+                  ← Change restaurant
+                </button>
+              </div>
+              {!menu.length ? (
+                <div className="card empty">No menu items found for this restaurant.</div>
+              ) : (
+                <>
+                  <div className="menu-section">
+                    <h2>Food</h2>
+                    {menu
+                      .filter((m) => m.item_type === 'Food')
+                      .map((item) => (
+                        <MenuItemRow
+                          key={item.id}
+                          item={item}
+                          qty={cart[item.id] || 0}
+                          add={add}
+                        />
+                      ))}
+                  </div>
+                  <div className="menu-section">
+                    <h2>Drinks</h2>
+                    {menu
+                      .filter((m) => m.item_type === 'Drink')
+                      .map((item) => (
+                        <MenuItemRow
+                          key={item.id}
+                          item={item}
+                          qty={cart[item.id] || 0}
+                          add={add}
+                        />
+                      ))}
+                  </div>
+                </>
+              )}
+            </Reveal>
           </div>
 
           <div className="cart card">
@@ -336,17 +346,26 @@ export default function CustomerView() {
               <div className="empty">No items yet. Add some from the menu.</div>
             ) : (
               <>
-                {cartItems.map((it) => {
-                  const item = menu.find((m) => m.id === it.menu_item_id);
-                  return (
-                    <div className="line" key={it.menu_item_id}>
-                      <span>
-                        {item.name} ×{it.quantity}
-                      </span>
-                      <span>{fmt(it.subtotal)}</span>
-                    </div>
-                  );
-                })}
+                <AnimatePresence initial={false}>
+                  {cartItems.map((it) => {
+                    const item = menu.find((m) => m.id === it.menu_item_id);
+                    return (
+                      <motion.div
+                        className="line"
+                        key={it.menu_item_id}
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+                        transition={{ duration: 0.22 }}
+                      >
+                        <span>
+                          {item.name} ×{it.quantity}
+                        </span>
+                        <span>{fmt(it.subtotal)}</span>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
                 <div className="line vat-block u-mt16">
                   <span>Subtotal (excl. VAT)</span>
                   <span>{fmt(vat.excl)}</span>
@@ -388,124 +407,151 @@ export default function CustomerView() {
       )}
 
       {/* Confirmation of placed order */}
-      {recentOrder && (
-        <div className="card confirm-card u-pad u-mt32">
-          <span className="badge placed">Order placed</span>
-          <h2 style={{ margin: '8px 0' }}>Order {shortId(recentOrder.id)}</h2>
-          <p>
-            Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
-            <strong>{fmt(recentOrder.total_amount)}</strong>
-          </p>
-          <div className="confirm-sum">
-            <div className="line">
-              <span>Subtotal (excl. VAT)</span>
-              <span>
-                {fmt(
-                  recentOrder.total_amount -
-                    (recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)
-                )}
-              </span>
-            </div>
-            <div className="line vat-line">
-              <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
-              <span>{fmt(recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)}</span>
-            </div>
-            <div className="line confirm-total">
-              <span>Total incl. VAT</span>
+      <AnimatePresence>
+        {recentOrder && (
+          <motion.div
+            className="card confirm-card u-pad u-mt32"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="badge placed">Order placed</span>
+            <h2 style={{ margin: '8px 0' }}>Order {shortId(recentOrder.id)}</h2>
+            <p>
+              Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
               <strong>{fmt(recentOrder.total_amount)}</strong>
+            </p>
+            <div className="confirm-sum">
+              <div className="line">
+                <span>Subtotal (excl. VAT)</span>
+                <span>
+                  {fmt(
+                    recentOrder.total_amount -
+                      (recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)
+                  )}
+                </span>
+              </div>
+              <div className="line vat-line">
+                <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
+                <span>{fmt(recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)}</span>
+              </div>
+              <div className="line confirm-total">
+                <span>Total incl. VAT</span>
+                <strong>{fmt(recentOrder.total_amount)}</strong>
+              </div>
             </div>
-          </div>
-          <p className="note">
-            Track it live below — switch to the Waiter view to start prep.
-          </p>
-          {recentOrder.notes && (
-            <p className="note request-note">Request: {recentOrder.notes}</p>
-          )}
-        </div>
-      )}
+            <p className="note">
+              Track it live below — switch to the Waiter view to start prep.
+            </p>
+            {recentOrder.notes && (
+              <p className="note request-note">Request: {recentOrder.notes}</p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Tracking / orders */}
-      <h1 className="page-title u-mt32">Your Orders</h1>
-      <p className="page-sub">Live status updates (refreshes automatically).</p>
+      <Reveal y={16}>
+        <h1 className="page-title u-mt32">Your Orders</h1>
+        <p className="page-sub">Live status updates (refreshes automatically).</p>
+      </Reveal>
       {trackingOrders.length === 0 ? (
         <div className="card empty">No orders yet for {customer ? customer.name : 'this customer'}.</div>
       ) : (
         <div className="order-grid">
-          {trackingOrders.map((o) => (
-            <OrderCard
-              key={o.id}
-              order={o}
-              statusLabel={statusLabel}
-              fmt={fmt}
-              onComplain={() => openComplain(o)}
-              onPay={() => pay(o)}
-              onViewReceipt={() => viewReceipt(o)}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {trackingOrders.map((o) => (
+              <motion.div
+                key={o.id}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <OrderCard
+                  order={o}
+                  statusLabel={statusLabel}
+                  fmt={fmt}
+                  onComplain={() => openComplain(o)}
+                  onPay={() => pay(o)}
+                  onViewReceipt={() => viewReceipt(o)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
 
       {/* Complaint modal */}
-      {complainOrder && (
-        <div
-          className="modal-wrap"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setComplainOrder(null);
-          }}
-        >
-          <div
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="complain-title"
+      <AnimatePresence>
+        {complainOrder && (
+          <motion.div
+            className="modal-wrap modal-wrap-motion"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setComplainOrder(null);
+            }}
           >
-            <h2 id="complain-title" tabIndex={-1} ref={complainTitleRef}>
-              Complaint & Rating
-            </h2>
-            <div className="sub">Order {shortId(complainOrder.id)}</div>
+            <motion.div
+              className="modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="complain-title"
+              initial={{ y: 24, scale: 0.96, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 12, scale: 0.97, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 26 }}
+            >
+              <h2 id="complain-title" tabIndex={-1} ref={complainTitleRef}>
+                Complaint & Rating
+              </h2>
+              <div className="sub">Order {shortId(complainOrder.id)}</div>
 
-            <span className="field-label">Rating</span>
-            <div className="stars">
-              {[1, 2, 3, 4, 5].map((s) => (
+              <span className="field-label">Rating</span>
+              <div className="stars">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <motion.button
+                    key={s}
+                    type="button"
+                    className={`star ${s <= rating ? 'on' : ''}`}
+                    onClick={() => setRating(s)}
+                    whileTap={{ scale: 0.8 }}
+                    aria-pressed={s <= rating}
+                    aria-label={`${s} of 5 stars`}
+                  >
+                    ★
+                  </motion.button>
+                ))}
+              </div>
+
+              <span className="field-label">Complaint</span>
+              <textarea
+                rows={3}
+                placeholder="Tell us what went wrong…"
+                value={complaintText}
+                onChange={(e) => setComplaintText(e.target.value)}
+              />
+
+              <div className="u-flex">
                 <button
-                  key={s}
-                  type="button"
-                  className={`star ${s <= rating ? 'on' : ''}`}
-                  onClick={() => setRating(s)}
-                  aria-pressed={s <= rating}
-                  aria-label={`${s} of 5 stars`}
+                  className="btn btn-ghost u-grow"
+                  onClick={() => setComplainOrder(null)}
                 >
-                  ★
+                  Cancel
                 </button>
-              ))}
-            </div>
-
-            <span className="field-label">Complaint</span>
-            <textarea
-              rows={3}
-              placeholder="Tell us what went wrong…"
-              value={complaintText}
-              onChange={(e) => setComplaintText(e.target.value)}
-            />
-
-            <div className="u-flex">
-              <button
-                className="btn btn-ghost u-grow"
-                onClick={() => setComplainOrder(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary u-grow2"
-                disabled={submitting}
-                onClick={saveComplaint}
-              >
-                {submitting ? 'Submitting…' : 'Submit Complaint'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                <button
+                  className="btn btn-primary u-grow2"
+                  disabled={submitting}
+                  onClick={saveComplaint}
+                >
+                  {submitting ? 'Submitting…' : 'Submit Complaint'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Receipt modal */}
       {receiptOrder && (

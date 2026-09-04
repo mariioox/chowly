@@ -123,6 +123,7 @@ button {
 }
 
 .role-btn {
+  position: relative;
   border: none;
   background: transparent;
   color: var(--muted);
@@ -132,15 +133,26 @@ button {
   font-size: 13px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  transition: all 0.25s ease;
+  transition: color 0.25s ease;
 }
 
-.role-btn:hover {
+.role-btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+.role-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--text);
+}
+
+.role-btn:hover:not(.active) {
   color: var(--text);
 }
 
 .role-btn.active {
-  background: var(--text);
   color: #faf9f6;
 }
 
@@ -176,6 +188,62 @@ button {
   margin-bottom: var(--space-4);
   font-weight: 300;
   letter-spacing: 0.2px;
+}
+
+/* ============================================================
+   View head + ornaments
+   ============================================================ */
+
+.view-head {
+  margin-bottom: var(--space-4);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: var(--space-1);
+}
+
+.eyebrow::before,
+.eyebrow::after {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary));
+}
+
+.eyebrow::after {
+  background: linear-gradient(90deg, var(--primary), transparent);
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--primary);
+  font-size: 12px;
+  margin-top: var(--space-2);
+  opacity: 0.7;
+}
+
+.ornament::before,
+.ornament::after {
+  content: '';
+  height: 1px;
+  width: 48px;
+  max-width: 20vw;
+  background: linear-gradient(90deg, transparent, var(--primary));
+}
+
+.ornament::after {
+  background: linear-gradient(90deg, var(--primary), transparent);
 }
 
 /* ============================================================
