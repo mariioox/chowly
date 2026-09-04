@@ -230,6 +230,15 @@ button {
   box-shadow: var(--shadow-lg);
 }
 
+.restaurant-card.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--gold-glow), var(--shadow-md);
+}
+
+.restaurant-card.selected .restaurant-info h3 {
+  color: var(--primary-dark);
+}
+
 .restaurant-card .restaurant-img-wrap {
   width: 100%;
   height: 240px;
@@ -285,6 +294,19 @@ button {
 
 .menu-section {
   margin-bottom: var(--space-5);
+}
+
+.menu-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.menu-head .btn {
+  white-space: nowrap;
 }
 
 .menu-section h2 {
@@ -801,6 +823,10 @@ input[type="text"]::placeholder {
   color: #d9d2c3;
   user-select: none;
   transition: color 0.2s ease, transform 0.15s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
 }
 
 .star:hover {
@@ -835,4 +861,191 @@ input[type="text"]::placeholder {
 ::selection {
   background: var(--primary-soft);
   color: var(--text);
+}
+
+/* ============================================================
+   Utility helpers
+   ============================================================ */
+
+.u-pad { padding: 20px; }
+.u-mb24 { margin-bottom: 24px; }
+.u-mt16 { margin-top: 16px; }
+.u-mt32 { margin-top: 32px; }
+.u-flex { display: flex; gap: 8px; }
+.u-grow { flex: 1; }
+.u-grow2 { flex: 2; }
+
+/* ============================================================
+   Image fallback
+   ============================================================ */
+
+.img-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-soft), var(--bg-soft));
+  color: var(--primary);
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 500;
+  overflow: hidden;
+}
+
+.menu-item .img-fallback {
+  font-size: 20px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Skeleton loaders
+   ============================================================ */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #efebe2;
+  border-radius: var(--radius-sm);
+  color: transparent;
+  user-select: none;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-title {
+  width: 320px;
+  max-width: 70%;
+  height: 34px;
+  margin-bottom: var(--space-1);
+}
+
+.skeleton-sub {
+  width: 280px;
+  max-width: 55%;
+  height: 14px;
+  margin-bottom: var(--space-4);
+}
+
+.skeleton-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.skeleton-text {
+  height: 12px;
+}
+
+.skeleton-btn {
+  height: 38px;
+  border-radius: 999px;
+}
+
+.skeleton-w60 { width: 60%; }
+.skeleton-w40 { width: 40%; }
+.skeleton-w30 { width: 30%; }
+
+.skeleton-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ============================================================
+   Order confirmation
+   ============================================================ */
+
+.confirm-card {
+  border-left: 3px solid var(--green);
+}
+
+.confirm-card h2 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   Focus visibility (keyboard)
+   ============================================================ */
+
+.btn:focus-visible,
+.role-btn:focus-visible,
+.qty-box button:focus-visible,
+.customer-option:focus-visible,
+.restaurant-card:focus-visible,
+.star:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+select:focus-visible,
+textarea:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* ============================================================
+   Responsive refinements
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .cart {
+    position: static;
+  }
+
+  .restaurant-card .restaurant-img-wrap {
+    height: 200px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: var(--space-4) 16px var(--space-5);
+  }
+
+  .topbar {
+    padding: 14px 16px;
+  }
+
+  .brand .logo {
+    font-size: 22px;
+  }
+
+  .page-title {
+    font-size: 25px;
+  }
+
+  .menu-item {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .menu-item .price {
+    margin-left: auto;
+  }
+
+  .restaurant-card .restaurant-img-wrap {
+    height: 170px;
+  }
+
+  .menu-head .btn {
+    width: 100%;
+  }
 }

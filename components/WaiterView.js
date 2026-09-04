@@ -8,8 +8,8 @@ import {
   updateOrderStatus,
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
-
-const fmt = (n) => '₦' + Number(n).toLocaleString();
+import { useModal } from '@/lib/useModal';
+import { fmt, shortId } from '@/lib/format';
 
 export default function WaiterView() {
   const toast = useToast();
@@ -101,6 +101,8 @@ export default function WaiterView() {
     setOrderDetail(null);
   };
 
+  const modalFocusRef = useModal(orderDetail !== null, closeModal);
+
   const statusLabel = {
     placed: 'placed',
     being_prepared: 'being prepared',
@@ -109,7 +111,18 @@ export default function WaiterView() {
   if (loading) {
     return (
       <div className="container">
-        <h1 className="page-title">Loading…</h1>
+        <div className="skeleton skeleton-title" />
+        <div className="skeleton skeleton-sub" />
+        <div className="order-grid">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="order-card card skeleton-stack">
+              <div className="skeleton skeleton-text skeleton-w60" />
+              <div className="skeleton skeleton-text skeleton-w40" />
+              <div className="skeleton skeleton-text skeleton-w30" />
+              <div className="skeleton skeleton-btn" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -126,7 +139,7 @@ export default function WaiterView() {
           {orders.map((o) => (
             <div key={o.id} className="order-card card">
               <div className="head">
-                <span className="oid">{o.id}</span>
+                <span className="oid">{shortId(o.id)}</span>
                 <span className={`badge ${o.status}`}>{statusLabel[o.status]}</span>
               </div>
               <div className="wait">Customer: <strong>{o.customers?.name}</strong></div>
@@ -143,15 +156,27 @@ export default function WaiterView() {
       )}
 
       {orderDetail && (
-        <div className="modal-wrap">
-          <div className="modal">
-            <h2>Order {orderDetail.id}</h2>
+        <div
+          className="modal-wrap"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+          }}
+        >
+          <div
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="order-modal-title"
+          >
+            <h2 id="order-modal-title" tabIndex={-1} ref={modalFocusRef}>
+              Order {shortId(orderDetail.id)}
+            </h2>
             <div className="sub">
               {orderDetail.restaurants?.name} · Customer: {orderDetail.customers?.name} ·{' '}
               {fmt(orderDetail.total_amount)}
             </div>
 
-            <span className="field-label" style={{ marginTop: 14 }}>
+            <span className="field-label u-mt16">
               Items
             </span>
             {orderDetail.order_items?.map((it) => (
@@ -187,17 +212,17 @@ export default function WaiterView() {
               ))}
             </select>
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={closeModal}>
+            <div className="u-flex u-mt16">
+              <button className="btn btn-ghost u-grow" onClick={closeModal}>
                 Close
               </button>
               {orderDetail.status === 'placed' && (
-                <button className="btn btn-primary" style={{ flex: 2 }} disabled={saving} onClick={beginPrep}>
+                <button className="btn btn-primary u-grow2" disabled={saving} onClick={beginPrep}>
                   Assign & Start Prep
                 </button>
               )}
               {orderDetail.status === 'being_prepared' && (
-                <button className="btn btn-green" style={{ flex: 2 }} disabled={saving} onClick={markServed}>
+                <button className="btn btn-green u-grow2" disabled={saving} onClick={markServed}>
                   Mark as Served
                 </button>
               )}

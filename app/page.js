@@ -17,12 +17,14 @@ export default function Home() {
         <div className="role-switch">
           <button
             className={`role-btn ${role === 'customer' ? 'active' : ''}`}
+            aria-pressed={role === 'customer'}
             onClick={() => setRole('customer')}
           >
             Customer
           </button>
           <button
             className={`role-btn ${role === 'waiter' ? 'active' : ''}`}
+            aria-pressed={role === 'waiter'}
             onClick={() => setRole('waiter')}
           >
             Waiter

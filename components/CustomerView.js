@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Image from 'next/image';
+import ImageWithFallback from '@/components/ImageWithFallback';
 import {
   getRestaurants,
   getMenu,
@@ -14,8 +14,8 @@ import {
   updateOrderStatus,
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
-
-const fmt = (n) => '₦' + Number(n).toLocaleString();
+import { useModal } from '@/lib/useModal';
+import { fmt, shortId } from '@/lib/format';
 
 export default function CustomerView() {
   const toast = useToast();
@@ -36,6 +36,7 @@ export default function CustomerView() {
   const [rating, setRating] = useState(1);
   const [complaintText, setComplaintText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const complainTitleRef = useModal(complainOrder !== null, () => setComplainOrder(null));
 
   const [placing, setPlacing] = useState(false);
 
@@ -75,18 +76,24 @@ export default function CustomerView() {
   }, [customer, loadOrders]);
 
   const openRestaurant = async (r) => {
-    setSelectedRestaurant(r);
-    setCart({});
     if (!customer) {
       toast('Pick the customer you are acting as first.');
       return;
     }
+    setSelectedRestaurant(r);
+    setCart({});
     try {
       const m = await getMenu(r.id);
       setMenu(m);
     } catch (e) {
       toast('Could not load menu: ' + e.message);
     }
+  };
+
+  const closeMenu = () => {
+    setSelectedRestaurant(null);
+    setMenu([]);
+    setCart({});
   };
 
   const add = (item, delta) => {
@@ -186,7 +193,21 @@ export default function CustomerView() {
   if (loading) {
     return (
       <div className="container">
-        <h1 className="page-title">Loading Chowly…</h1>
+        <div className="skeleton skeleton-title" />
+        <div className="skeleton skeleton-sub" />
+        <div className="restaurant-grid">
+          {[1, 2].map((i) => (
+            <div key={i} className="restaurant-card">
+              <div className="restaurant-img-wrap">
+                <div className="skeleton skeleton-img" />
+              </div>
+              <div className="restaurant-info skeleton-stack">
+                <div className="skeleton skeleton-text skeleton-w60" />
+                <div className="skeleton skeleton-text skeleton-w40" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -199,7 +220,7 @@ export default function CustomerView() {
         Act as a customer: pick who you are, choose a restaurant, order, track and pay.
       </p>
 
-      <div className="card" style={{ padding: 20, marginBottom: 24 }}>
+      <div className="card u-pad u-mb24">
         <span className="label">Step 1 — Who is the customer?</span>
         <div className="customer-select">
           {customers.map((c) => (
@@ -221,20 +242,19 @@ export default function CustomerView() {
         {restaurants.map((r) => (
           <button
             key={r.id}
-            className="restaurant-card"
+            className={`restaurant-card ${selectedRestaurant?.id === r.id ? 'selected' : ''}`}
             onClick={() => openRestaurant(r)}
           >
-            {r.image_url && (
-              <div className="restaurant-img-wrap">
-                <Image
-                  className="restaurant-img"
-                  src={r.image_url}
-                  alt={r.name}
-                  width={900}
-                  height={720}
-                />
-              </div>
-            )}
+            <div className="restaurant-img-wrap">
+              <ImageWithFallback
+                className="restaurant-img"
+                src={r.image_url}
+                alt={r.name}
+                fallbackText={r.name.charAt(0)}
+                width={900}
+                height={720}
+              />
+            </div>
             <div className="restaurant-info">
               <h3>{r.name}</h3>
               <div className="addr">{r.address}</div>
@@ -247,9 +267,12 @@ export default function CustomerView() {
       {selectedRestaurant ? (
         <div className="menu-layout">
           <div>
-            <h1 className="page-title">
-              {selectedRestaurant.name} — Menu
-            </h1>
+            <div className="menu-head">
+              <h1 className="page-title">{selectedRestaurant.name} — Menu</h1>
+              <button className="btn btn-ghost" onClick={closeMenu}>
+                ← Change restaurant
+              </button>
+            </div>
             {!menu.length ? (
               <div className="card empty">No menu items found for this restaurant.</div>
             ) : (
@@ -306,7 +329,7 @@ export default function CustomerView() {
                   <span>{fmt(totalAmount)}</span>
                 </div>
                 <div className="note">Estimated waiting time: ~{waitingTime} mins</div>
-                <div style={{ marginTop: 14 }}>
+                <div className="u-mt16">
                   <button className="btn btn-primary" disabled={placing} onClick={submitOrder}>
                     {placing ? 'Placing…' : 'Submit Order'}
                   </button>
@@ -321,19 +344,21 @@ export default function CustomerView() {
 
       {/* Confirmation of placed order */}
       {recentOrder && (
-        <div className="card" style={{ padding: 20, marginTop: 24 }}>
+        <div className="card confirm-card u-pad u-mt32">
           <span className="badge placed">Order placed</span>
-          <h2 style={{ margin: '8px 0' }}>Order {recentOrder.id}</h2>
+          <h2 style={{ margin: '8px 0' }}>Order {shortId(recentOrder.id)}</h2>
           <p>
             Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
             <strong>{fmt(recentOrder.total_amount)}</strong>
           </p>
-          <p className="note">You can track it live in the section below.</p>
+          <p className="note">
+            Track it live below — switch to the Waiter view to start prep.
+          </p>
         </div>
       )}
 
       {/* Tracking / orders */}
-      <h1 className="page-title" style={{ marginTop: 32 }}>Your Orders</h1>
+      <h1 className="page-title u-mt32">Your Orders</h1>
       <p className="page-sub">Live status updates (refreshes automatically).</p>
       {trackingOrders.length === 0 ? (
         <div className="card empty">No orders yet for {customer ? customer.name : 'this customer'}.</div>
@@ -354,21 +379,36 @@ export default function CustomerView() {
 
       {/* Complaint modal */}
       {complainOrder && (
-        <div className="modal-wrap">
-          <div className="modal">
-            <h2>Complaint & Rating</h2>
-            <div className="sub">Order {complainOrder.id}</div>
+        <div
+          className="modal-wrap"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setComplainOrder(null);
+          }}
+        >
+          <div
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="complain-title"
+          >
+            <h2 id="complain-title" tabIndex={-1} ref={complainTitleRef}>
+              Complaint & Rating
+            </h2>
+            <div className="sub">Order {shortId(complainOrder.id)}</div>
 
             <span className="field-label">Rating</span>
             <div className="stars">
               {[1, 2, 3, 4, 5].map((s) => (
-                <span
+                <button
                   key={s}
+                  type="button"
                   className={`star ${s <= rating ? 'on' : ''}`}
                   onClick={() => setRating(s)}
+                  aria-pressed={s <= rating}
+                  aria-label={`${s} of 5 stars`}
                 >
                   ★
-                </span>
+                </button>
               ))}
             </div>
 
@@ -380,11 +420,18 @@ export default function CustomerView() {
               onChange={(e) => setComplaintText(e.target.value)}
             />
 
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setComplainOrder(null)}>
+            <div className="u-flex">
+              <button
+                className="btn btn-ghost u-grow"
+                onClick={() => setComplainOrder(null)}
+              >
                 Cancel
               </button>
-              <button className="btn btn-primary" style={{ flex: 2 }} disabled={submitting} onClick={saveComplaint}>
+              <button
+                className="btn btn-primary u-grow2"
+                disabled={submitting}
+                onClick={saveComplaint}
+              >
                 {submitting ? 'Submitting…' : 'Submit Complaint'}
               </button>
             </div>
@@ -398,15 +445,14 @@ export default function CustomerView() {
 function MenuItemRow({ item, qty, add }) {
   return (
     <div className="menu-item">
-      {item.image_url && (
-        <Image
-          className="menu-item-img"
-          src={item.image_url}
-          alt={item.name}
-          width={76}
-          height={76}
-        />
-      )}
+      <ImageWithFallback
+        className="menu-item-img"
+        src={item.image_url}
+        alt={item.name}
+        fallbackText={item.name.charAt(0)}
+        width={76}
+        height={76}
+      />
       <div className="meta">
         <div className="name">{item.name}</div>
         {item.description && <div className="desc">{item.description}</div>}
@@ -419,9 +465,9 @@ function MenuItemRow({ item, qty, add }) {
         </button>
       ) : (
         <div className="qty-box">
-          <button onClick={() => add(item, -1)}>−</button>
+          <button onClick={() => add(item, -1)} aria-label={`Remove one ${item.name}`}>−</button>
           <span>{qty}</span>
-          <button onClick={() => add(item, 1)}>+</button>
+          <button onClick={() => add(item, 1)} aria-label={`Add one ${item.name}`}>+</button>
         </div>
       )}
     </div>
@@ -432,7 +478,7 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay }) {
   return (
     <div className="order-card card">
       <div className="head">
-        <span className="oid">{order.id}</span>
+        <span className="oid">{shortId(order.id)}</span>
         <span className={`badge ${order.status}`}>{statusLabel[order.status]}</span>
       </div>
       <div className="wait">
