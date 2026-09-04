@@ -271,6 +271,22 @@ button {
   margin-bottom: var(--space-1);
 }
 
+/* Generic line row: label left, value right (cart, modals, receipts) */
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: 7px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.line > span:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ============================================================
    Restaurant Picker
    ============================================================ */
@@ -920,7 +936,7 @@ input[type="text"]::placeholder {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  padding: var(--space-4);
+  padding: var(--space-3) 36px var(--space-4);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-light);
 }
@@ -929,7 +945,6 @@ input[type="text"]::placeholder {
   font-family: var(--font-serif);
   font-size: 24px;
   font-weight: 500;
-  margin-bottom: 4px;
   color: var(--text);
 }
 
@@ -937,6 +952,11 @@ input[type="text"]::placeholder {
   color: var(--muted);
   font-size: 14px;
   font-weight: 300;
+  margin-bottom: var(--space-1);
+}
+
+.modal .line {
+  padding: 8px 0;
 }
 
 @keyframes fadeIn {
@@ -999,7 +1019,7 @@ input[type="text"]::placeholder {
 .stars {
   display: flex;
   gap: 6px;
-  margin: var(--space-1) 0;
+  margin: var(--space-1) 0 var(--space-2);
 }
 
 .star {
@@ -1364,6 +1384,10 @@ input[type="text"]::placeholder {
 
 .receipt-items .line {
   align-items: baseline;
+}
+
+.receipt-items .line:not(:last-child) {
+  padding-bottom: 10px;
 }
 
 .receipt-qty {
