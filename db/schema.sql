@@ -121,14 +121,14 @@ insert into customers values
 
 -- Menu (fine-dining Nigerian menu, refined names + descriptions)
 insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_time_mins,image_url) values
- ('M001','R001','Charred Suya Chicken','Fire-grilled chicken, house suya spice, charred citrus, smoked scotch bonnet oil','Food',18500,20,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
- ('M002','R001','House Chapman','Citrus-hibiscus aperitif, angostura bitters, toasted clove, candied ginger','Drink',6500,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
- ('M003','R001','Uziza Pepper Broth','Slow-simmered goat consommé, uziza leaf, aromatic spices, palm-oil emulsion','Food',22000,25,'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=400&fit=crop'),
- ('M004','R001','Zobo Tonic','Hibiscus-cooled infusion, ginger, star anise, lightly sweetened','Drink',4500,3,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
- ('M005','R002','Smoked Jollof Basmati','One-pot smoked rice, farm tomatoes, scotch bonnet, grilled prawn, burnt lemon','Food',16500,15,'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&h=400&fit=crop'),
- ('M006','R002','Ofada Rice & Assorted','Ancestral unpolished rice, assorted pepper suya, aged palm-oil stew, plantain crisp','Food',21000,20,'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&h=400&fit=crop'),
- ('M007','R002','Signature Chapman','House bitter base, fresh citrus, infusions of the day, smoked demerara rim','Drink',6800,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
- ('M008','R002','Fresh Cold-Pressed Orange','Hand-picked valencia oranges, chilled to order, subtle orange-blossom','Drink',7500,4,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop');
+ ('M001','R001','Suya-Glazed Free-Range Chicken','Fire-roasted free-range chicken, smoked suya rub, charred citrus supremes, Scotch-bonnet oil','Food',18500,20,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
+ ('M002','R001','Antiquarian Chapman','Hibiscus-citrus aperitif, Angostura bitters, toasted-clove smoke, candied ginger','Drink',6500,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
+ ('M003','R001','Uziza-Braised Goat Consommé','Six-hour braised goat consommé, fresh uziza leaf, grains of paradise, palm-oil emulsion','Food',22000,25,'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=400&fit=crop'),
+ ('M004','R001','Zobo & Star-Anise Tonic','Chilled hibiscus infusion, ginger, star anise, orange-blossom mist','Drink',4500,3,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
+ ('M005','R002','Smoked Jollof, Grilled Prawn & Burnt Lemon','Scented basmati, fire-toasted tomatoes, Scotch-bonnet jus, grilled prawn, burnt lemon','Food',16500,15,'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&h=400&fit=crop'),
+ ('M006','R002','Heritage Ofada & Assorted Meats','Ancestral unpolished rice, assorted pepper suya, aged palm-oil stew, plantain crisp','Food',21000,20,'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&h=400&fit=crop'),
+ ('M007','R002','Vintage Chapman Édition','House bitter base, fresh citrus, infusions of the day, smoked-demerara rim','Drink',6800,5,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
+ ('M008','R002','Cold-Pressed Valencia & Orange Blossom','Hand-picked Valencia oranges, chilled to order, orange-blossom mist','Drink',7500,4,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop');
 
 -- Staff
 insert into staff (id,restaurant_id,name,role,phone) values
