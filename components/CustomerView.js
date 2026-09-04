@@ -15,7 +15,7 @@ import {
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
-import { fmt, shortId } from '@/lib/format';
+import { fmt, shortId, splitVat, VAT_RATE } from '@/lib/format';
 
 export default function CustomerView() {
   const toast = useToast();
@@ -117,6 +117,7 @@ export default function CustomerView() {
       subtotal: cart[item.id] * Number(item.price),
     }));
   const totalAmount = cartItems.reduce((s, it) => s + it.subtotal, 0);
+  const vat = splitVat(totalAmount);
   const waitingTime = cartItems.length
     ? Math.max(...cartItems.map((it) => {
         const item = menu.find((m) => m.id === it.menu_item_id);
@@ -135,6 +136,7 @@ export default function CustomerView() {
         items: cartItems,
         totalAmount,
         waitingTime,
+        vatAmount: vat.vat,
       });
       setRecentOrder(order);
       setCart({});
@@ -324,11 +326,22 @@ export default function CustomerView() {
                     </div>
                   );
                 })}
-                <div className="total">
-                  <span>Total</span>
-                  <span>{fmt(totalAmount)}</span>
+                <div className="line vat-block u-mt16">
+                  <span>Subtotal (excl. VAT)</span>
+                  <span>{fmt(vat.excl)}</span>
                 </div>
-                <div className="note">Estimated waiting time: ~{waitingTime} mins</div>
+                <div className="line vat-line">
+                  <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
+                  <span>{fmt(vat.vat)}</span>
+                </div>
+                <div className="total">
+                  <span>Total incl. VAT</span>
+                  <strong>{fmt(totalAmount)}</strong>
+                </div>
+                <div className="note">
+                  Menu prices include {Math.round(VAT_RATE * 100)}% VAT · Est. waiting ~
+                  {waitingTime} mins
+                </div>
                 <div className="u-mt16">
                   <button className="btn btn-primary" disabled={placing} onClick={submitOrder}>
                     {placing ? 'Placing…' : 'Submit Order'}
@@ -351,6 +364,25 @@ export default function CustomerView() {
             Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
             <strong>{fmt(recentOrder.total_amount)}</strong>
           </p>
+          <div className="confirm-sum">
+            <div className="line">
+              <span>Subtotal (excl. VAT)</span>
+              <span>
+                {fmt(
+                  recentOrder.total_amount -
+                    (recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)
+                )}
+              </span>
+            </div>
+            <div className="line vat-line">
+              <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
+              <span>{fmt(recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)}</span>
+            </div>
+            <div className="line confirm-total">
+              <span>Total incl. VAT</span>
+              <strong>{fmt(recentOrder.total_amount)}</strong>
+            </div>
+          </div>
           <p className="note">
             Track it live below — switch to the Waiter view to start prep.
           </p>
