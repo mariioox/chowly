@@ -628,7 +628,8 @@ export default function CustomerView() {
                   <strong>{fmt(receiptOrder.total_amount)}</strong>
                 </div>
               </div>
-              <div className="receipt-stamp">Paid</div>
+              <div className="receipt-stamp">Paid · Pretend</div>
+              <div className="receipt-note">Pretend payment — recorded for this demo, no real charge.</div>
               <div className="receipt-thanks">
                 Thank you for dining with {receiptOrder.restaurants?.name}.
               </div>
@@ -701,9 +702,12 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay, onViewReceipt }
           </button>
         )}
         {order.status === 'served' && (
-          <button className="btn btn-green" onClick={onPay}>
-            Pay — Settle Balance
-          </button>
+          <div className="pay-box">
+            <button className="btn btn-green" onClick={onPay}>
+              Pay — PRETEND
+            </button>
+            <div className="pay-note">Pretend payment — no real charge is made.</div>
+          </div>
         )}
         {order.status === 'paid' && (
           <button className="btn btn-ghost" onClick={onViewReceipt}>
