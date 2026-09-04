@@ -128,9 +128,7 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M105','R001','Garden Salad','Mixed greens, cherry tomatoes, cucumber, balsamic dressing','Food',9500,8,'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop'),
  ('M106','R001','Pepper Soup','Spicy peppery broth, tender meat, native herbs, warming heat','Food',12000,20,'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=400&fit=crop'),
  ('M107','R001','Grilled Salmon','Seared salmon fillet, lemon butter, fresh herbs','Food',26500,22,'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=400&fit=crop'),
- ('M108','R001','House Chapman','Classic layered citrus mocktail with bitters and a fruity finish','Drink',5500,4,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
  ('M109','R001','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
- ('M110','R001','Zobo Drink','Chilled hibiscus infusion, ginger, lightly sweetened','Drink',4000,4,'https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=400&h=400&fit=crop'),
  ('M111','R001','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop'),
  ('M201','R002','BBQ Beef Ribs','Slow-cooked beef ribs, sticky barbecue glaze, smoky char','Food',24500,20,'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=400&fit=crop'),
  ('M202','R002','Grilled Chicken','Marinated grilled chicken, charred edges, garlic herb butter','Food',18500,18,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
@@ -139,9 +137,7 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M205','R002','Garden Salad','Mixed greens, cherry tomatoes, cucumber, balsamic dressing','Food',9500,8,'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop'),
  ('M206','R002','Pepper Soup','Spicy peppery broth, tender meat, native herbs, warming heat','Food',12000,20,'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=400&fit=crop'),
  ('M207','R002','Grilled Salmon','Seared salmon fillet, lemon butter, fresh herbs','Food',26500,22,'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=400&fit=crop'),
- ('M208','R002','House Chapman','Classic layered citrus mocktail with bitters and a fruity finish','Drink',5500,4,'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=400&fit=crop'),
  ('M209','R002','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
- ('M210','R002','Zobo Drink','Chilled hibiscus infusion, ginger, lightly sweetened','Drink',4000,4,'https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=400&h=400&fit=crop'),
  ('M211','R002','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop');
 
 -- Staff
