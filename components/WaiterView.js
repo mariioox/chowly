@@ -10,16 +10,108 @@ import {
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
+import { useNow } from '@/lib/useNow';
 import { fmt, shortId } from '@/lib/format';
 import OrderTimeline from '@/components/OrderTimeline';
+import Countdown from '@/components/Countdown';
 import Reveal from '@/components/Reveal';
+
+const statusLabel = {
+  placed: 'placed',
+  being_prepared: 'in prep',
+};
+
+const baseTimeOf = (o) => {
+  const base =
+    o.status === 'being_prepared' && o.updated_at ? o.updated_at : o.created_at;
+  return base ? new Date(base).getTime() : null;
+};
+
+const isOverdue = (o, now) => {
+  const base = baseTimeOf(o) ?? now;
+  const deadline = base + (Number(o.waiting_time) || 0) * 60000;
+  return deadline < now;
+};
+
+function ServiceQueue({ orders, onOpen }) {
+  const now = useNow(1000);
+
+  const placedCount = orders.filter((o) => o.status === 'placed').length;
+  const prepCount = orders.filter((o) => o.status === 'being_prepared').length;
+  const overdueCount = orders.filter(
+    (o) => o.status === 'being_prepared' && isOverdue(o, now)
+  ).length;
+
+  return (
+    <>
+      <Reveal>
+        <div className="svc-bar">
+          <div className="svc-bar-title">
+            <span className="label">Service queue</span>
+            <div className="svc-clock">{new Date(now).toLocaleTimeString()}</div>
+          </div>
+          <div className="svc-chips">
+            <span className="svc-chip">{placedCount} placed</span>
+            <span className="svc-chip prep">{prepCount} in prep</span>
+            <span className={`svc-chip ${overdueCount ? 'danger' : ''}`}>
+              {overdueCount} overdue
+            </span>
+          </div>
+        </div>
+      </Reveal>
+
+      {orders.length === 0 ? (
+        <div className="card empty">No incoming orders right now. New orders will appear here.</div>
+      ) : (
+        <div className="order-grid">
+          <AnimatePresence initial={false}>
+            {orders.map((o) => {
+              const inPrep = o.status === 'being_prepared';
+              return (
+                <motion.div
+                  key={o.id}
+                  className={`order-card card svc-card ${inPrep && isOverdue(o, now) ? 'svc-card-danger' : ''}`}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="head">
+                    <span className="oid">{shortId(o.id)}</span>
+                    <span className={`badge ${o.status}`}>{statusLabel[o.status]}</span>
+                  </div>
+                  <div className="wait">Customer: <strong>{o.customers?.name}</strong></div>
+                  {inPrep ? (
+                    <Countdown baseTime={baseTimeOf(o)} waitingMinutes={o.waiting_time} />
+                  ) : (
+                    <div className="wait">Est. prep: <strong>~{o.waiting_time ?? '—'} mins</strong></div>
+                  )}
+                  {o.notes && <div className="request-chip">✎ {o.notes}</div>}
+                  <OrderTimeline status={o.status} compact />
+                  <div className="amount">{fmt(o.total_amount)}</div>
+                  <div className="actions">
+                    <motion.button
+                      className="btn btn-blue"
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => onOpen(o.id)}
+                    >
+                      Open Order
+                    </motion.button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function WaiterView() {
   const toast = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [now, setNow] = useState(() => Date.now());
 
   const [openOrderId, setOpenOrderId] = useState(null);
   const [orderDetail, setOrderDetail] = useState(null);
@@ -46,11 +138,6 @@ export default function WaiterView() {
       await loadActive();
     })();
     const id = setInterval(() => loadActive(), 5000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -113,36 +200,6 @@ export default function WaiterView() {
 
   const modalFocusRef = useModal(orderDetail !== null, closeModal);
 
-  const statusLabel = {
-    placed: 'placed',
-    being_prepared: 'in prep',
-  };
-
-  const deadlineFor = (o) => {
-    const base =
-      o.status === 'being_prepared' && o.updated_at ? o.updated_at : o.created_at;
-    const t = base ? new Date(base).getTime() : now;
-    return t + (Number(o.waiting_time) || 0) * 60000;
-  };
-
-  const timeLeft = (o) => {
-    const ms = deadlineFor(o) - now;
-    return { ms, overdue: ms < 0 };
-  };
-
-  const fmtClock = (ms) => {
-    const s = Math.max(0, Math.floor(Math.abs(ms) / 1000));
-    const m = Math.floor(s / 60);
-    const r = s % 60;
-    return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
-  };
-
-  const placedCount = orders.filter((o) => o.status === 'placed').length;
-  const prepCount = orders.filter((o) => o.status === 'being_prepared').length;
-  const overdueCount = orders.filter(
-    (o) => o.status === 'being_prepared' && timeLeft(o).overdue
-  ).length;
-
   if (loading) {
     return (
       <div className="container">
@@ -164,70 +221,7 @@ export default function WaiterView() {
 
   return (
     <div className="container">
-      <Reveal>
-        <div className="svc-bar">
-          <div className="svc-bar-title">
-            <span className="label">Service queue</span>
-            <div className="svc-clock">{new Date(now).toLocaleTimeString()}</div>
-          </div>
-          <div className="svc-chips">
-            <span className="svc-chip">{placedCount} placed</span>
-            <span className="svc-chip prep">{prepCount} in prep</span>
-            <span className={`svc-chip ${overdueCount ? 'danger' : ''}`}>
-              {overdueCount} overdue
-            </span>
-          </div>
-        </div>
-      </Reveal>
-
-      {orders.length === 0 ? (
-        <div className="card empty">No incoming orders right now. New orders will appear here.</div>
-      ) : (
-        <div className="order-grid">
-          <AnimatePresence initial={false}>
-          {orders.map((o) => {
-            const { ms, overdue } = timeLeft(o);
-            const inPrep = o.status === 'being_prepared';
-            return (
-              <motion.div
-                key={o.id}
-                className={`order-card card svc-card ${inPrep && overdue ? 'svc-card-danger' : ''}`}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="head">
-                  <span className="oid">{shortId(o.id)}</span>
-                  <span className={`badge ${o.status}`}>{statusLabel[o.status]}</span>
-                </div>
-                <div className="wait">Customer: <strong>{o.customers?.name}</strong></div>
-                {inPrep ? (
-                  <div className={`prep-timer ${overdue ? 'overdue' : ''}`}>
-                    <span className="prep-label">{overdue ? 'Overdue by' : 'Ready in'}</span>
-                    <strong>{fmtClock(ms)}</strong>
-                  </div>
-                ) : (
-                  <div className="wait">Est. prep: <strong>~{o.waiting_time ?? '—'} mins</strong></div>
-                )}
-                {o.notes && <div className="request-chip">✎ {o.notes}</div>}
-                <OrderTimeline status={o.status} compact />
-                <div className="amount">{fmt(o.total_amount)}</div>
-                <div className="actions">
-                  <motion.button
-                    className="btn btn-blue"
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => openOrder(o.id)}
-                  >
-                    Open Order
-                  </motion.button>
-                </div>
-              </motion.div>
-            );
-          })}
-          </AnimatePresence>
-        </div>
-      )}
+      <ServiceQueue orders={orders} onOpen={openOrder} />
 
       <AnimatePresence>
         {orderDetail && (
@@ -253,78 +247,73 @@ export default function WaiterView() {
               <h2 id="order-modal-title" tabIndex={-1} ref={modalFocusRef}>
                 Order {shortId(orderDetail.id)}
               </h2>
-            <div className="sub">
-              {orderDetail.restaurants?.name} · Customer: {orderDetail.customers?.name} ·{' '}
-              {fmt(orderDetail.total_amount)}
-            </div>
-
-            <span className="field-label u-mt16">
-              Items
-            </span>
-            {orderDetail.order_items?.map((it) => (
-              <div className="line" key={it.id}>
-                <span>
-                  {it.menu_items?.name} ×{it.quantity}
-                </span>
-                <span>{fmt(it.subtotal)}</span>
+              <div className="sub">
+                {orderDetail.restaurants?.name} · Customer: {orderDetail.customers?.name} ·{' '}
+                {fmt(orderDetail.total_amount)}
               </div>
-            ))}
 
-            {orderDetail.status === 'being_prepared' && (
-              <div className={`prep-timer ${timeLeft(orderDetail).overdue ? 'overdue' : ''}`}>
-                <span className="prep-label">
-                  {timeLeft(orderDetail).overdue ? 'Overdue by' : 'Ready in'}
-                </span>
-                <strong>{fmtClock(timeLeft(orderDetail).ms)}</strong>
-              </div>
-            )}
-
-            {orderDetail.notes && (
-              <>
-                <span className="field-label">Special request</span>
-                <div className="request-chip">✎ {orderDetail.notes}</div>
-              </>
-            )}
-
-            <span className="field-label">Waiter</span>
-            <select value={waiterId} onChange={(e) => setWaiterId(e.target.value)}>
-              <option value="">— select waiter —</option>
-              {byRole('Waiter').map((s) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
+              <span className="field-label u-mt16">
+                Items
+              </span>
+              {orderDetail.order_items?.map((it) => (
+                <div className="line" key={it.id}>
+                  <span>
+                    {it.menu_items?.name} ×{it.quantity}
+                  </span>
+                  <span>{fmt(it.subtotal)}</span>
+                </div>
               ))}
-            </select>
 
-            <span className="field-label">Chef</span>
-            <select value={chefId} onChange={(e) => setChefId(e.target.value)}>
-              <option value="">— select chef —</option>
-              {byRole('Chef').map((s) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
-              ))}
-            </select>
-
-            <span className="field-label">Bartender</span>
-            <select value={bartenderId} onChange={(e) => setBartenderId(e.target.value)}>
-              <option value="">— select bartender —</option>
-              {byRole('Bartender').map((s) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
-              ))}
-            </select>
-
-            <div className="u-flex u-mt16">
-              <button className="btn btn-ghost u-grow" onClick={closeModal}>
-                Close
-              </button>
-              {orderDetail.status === 'placed' && (
-                <button className="btn btn-primary u-grow2" disabled={saving} onClick={beginPrep}>
-                  Assign & Start Prep
-                </button>
-              )}
               {orderDetail.status === 'being_prepared' && (
-                <button className="btn btn-green u-grow2" disabled={saving} onClick={markServed}>
-                  Mark as Served
-                </button>
+                <Countdown baseTime={baseTimeOf(orderDetail)} waitingMinutes={orderDetail.waiting_time} />
               )}
-            </div>
+
+              {orderDetail.notes && (
+                <>
+                  <span className="field-label">Special request</span>
+                  <div className="request-chip">✎ {orderDetail.notes}</div>
+                </>
+              )}
+
+              <span className="field-label">Waiter</span>
+              <select value={waiterId} onChange={(e) => setWaiterId(e.target.value)}>
+                <option value="">— select waiter —</option>
+                {byRole('Waiter').map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+
+              <span className="field-label">Chef</span>
+              <select value={chefId} onChange={(e) => setChefId(e.target.value)}>
+                <option value="">— select chef —</option>
+                {byRole('Chef').map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+
+              <span className="field-label">Bartender</span>
+              <select value={bartenderId} onChange={(e) => setBartenderId(e.target.value)}>
+                <option value="">— select bartender —</option>
+                {byRole('Bartender').map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+
+              <div className="u-flex u-mt16">
+                <button className="btn btn-ghost u-grow" onClick={closeModal}>
+                  Close
+                </button>
+                {orderDetail.status === 'placed' && (
+                  <button className="btn btn-primary u-grow2" disabled={saving} onClick={beginPrep}>
+                    Assign & Start Prep
+                  </button>
+                )}
+                {orderDetail.status === 'being_prepared' && (
+                  <button className="btn btn-green u-grow2" disabled={saving} onClick={markServed}>
+                    Mark as Served
+                  </button>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}
