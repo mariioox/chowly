@@ -8,7 +8,6 @@ import Reveal from '@/components/Reveal';
 import {
   getRestaurants,
   getMenu,
-  getCustomers,
   placeOrder,
   getOrders,
   getOrderDetails,
@@ -21,14 +20,11 @@ import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
 import { fmt, shortId, splitVat, VAT_RATE } from '@/lib/format';
 
-export default function CustomerView() {
+export default function CustomerView({ identity }) {
   const toast = useToast();
   const [restaurants, setRestaurants] = useState([]);
-  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-  const [customer, setCustomer] = useState(null);
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState({});
 
@@ -51,22 +47,21 @@ export default function CustomerView() {
   const loadOrders = useCallback(async () => {
     try {
       const all = await getOrders();
-      const mine = customer
-        ? all.filter((o) => o.customer_id === customer.id)
+      const mine = identity
+        ? all.filter((o) => o.customer_id === identity.id)
         : [];
       setOrders(all);
       setTrackingOrders(mine);
     } catch (e) {
       // ignore polling errors
     }
-  }, [customer]);
+  }, [identity]);
 
   useEffect(() => {
     (async () => {
       try {
-        const [r, c] = await Promise.all([getRestaurants(), getCustomers()]);
+        const r = await getRestaurants();
         setRestaurants(r);
-        setCustomers(c);
       } catch (e) {
         toast('Failed to load. Is the database seeded? ' + e.message);
       } finally {
@@ -81,11 +76,11 @@ export default function CustomerView() {
     })();
     const id = setInterval(() => loadOrders(), 5000);
     return () => clearInterval(id);
-  }, [customer, loadOrders]);
+  }, [identity, loadOrders]);
 
   const openRestaurant = async (r) => {
-    if (!customer) {
-      toast('Pick the customer you are acting as first.');
+    if (!identity) {
+      toast('Sign in as a guest first.');
       return;
     }
     setSelectedRestaurant(r);
@@ -135,12 +130,12 @@ export default function CustomerView() {
     : 0;
 
   const submitOrder = async () => {
-    if (!customer) return toast('Select which customer is ordering.');
+    if (!identity) return toast('Sign in as a guest first.');
     if (!cartItems.length) return toast('Add at least one item.');
     setPlacing(true);
     try {
       const order = await placeOrder({
-        customerId: customer.id,
+        customerId: identity.id,
         restaurantId: selectedRestaurant.id,
         items: cartItems,
         totalAmount,
@@ -238,36 +233,18 @@ export default function CustomerView() {
 
   return (
     <div className="container">
-      {/* Step 1: who is ordering */}
+      {/* Step 1: choose restaurant */}
       <Reveal className="view-head">
-        <span className="eyebrow">Chowly · Table Service</span>
+        <span className="eyebrow">Chowly · Table Service · {identity?.name}</span>
         <h1 className="page-title">Customer Dining Experience</h1>
         <p className="page-sub">
-          Act as a customer: pick who you are, choose a restaurant, order, track and pay.
+          Choose a restaurant, order, track and pay — all as {identity?.name}.
         </p>
       </Reveal>
 
-      <Reveal delay={0.05}>
-        <div className="card u-pad u-mb24">
-          <span className="label">Step 1 — Who is the customer?</span>
-          <div className="customer-select">
-            {customers.map((c) => (
-              <button
-                key={c.id}
-                className={`customer-option ${customer?.id === c.id ? 'selected' : ''}`}
-                onClick={() => setCustomer(c)}
-              >
-                <span className="nm">{c.name}</span>
-                <div className="em">{c.email}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </Reveal>
-
       {/* Step 2: choose restaurant */}
-      <Reveal delay={0.1}>
-        <span className="label">Step 2 — Choose a restaurant</span>
+      <Reveal delay={0.05}>
+        <span className="label">Step 1 — Choose a restaurant</span>
         <div className="restaurant-grid" style={{ marginBottom: 24 }}>
           {restaurants.map((r) => (
             <button
@@ -441,7 +418,7 @@ export default function CustomerView() {
               </div>
             </div>
             <p className="note">
-              Track it live below — switch to the Waiter view to start prep.
+              Track it live below — the staff will start prep from the staff entrance.
             </p>
             {recentOrder.notes && (
               <p className="note request-note">Request: {recentOrder.notes}</p>
@@ -456,7 +433,7 @@ export default function CustomerView() {
         <p className="page-sub">Live status updates (refreshes automatically).</p>
       </Reveal>
       {trackingOrders.length === 0 ? (
-        <div className="card empty">No orders yet for {customer ? customer.name : 'this customer'}.</div>
+        <div className="card empty">No orders yet for {identity ? identity.name : 'this guest'}.</div>
       ) : (
         <div className="order-grid">
           <AnimatePresence initial={false}>

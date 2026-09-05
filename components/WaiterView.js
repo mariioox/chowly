@@ -108,7 +108,7 @@ function ServiceQueue({ orders, onOpen }) {
   );
 }
 
-export default function WaiterView() {
+export default function WaiterView({ identity }) {
   const toast = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -148,7 +148,8 @@ export default function WaiterView() {
       setOrderDetail(detail);
       const staffList = await getStaff(detail.restaurant_id);
       setStaff(staffList);
-      setWaiterId(detail.waiter_id || '');
+      const signedInWaiterWorksHere = identity && staffList.some((s) => s.id === identity.id);
+      setWaiterId(signedInWaiterWorksHere ? identity.id : detail.waiter_id || '');
       setChefId(detail.chef_id || '');
       setBartenderId(detail.bartender_id || '');
     } catch (e) {
@@ -221,6 +222,15 @@ export default function WaiterView() {
 
   return (
     <div className="container">
+      <Reveal className="view-head">
+        <span className="eyebrow">Chowly · Staff entrance · {identity?.name}</span>
+        <h1 className="page-title">Service Desk</h1>
+        <p className="page-sub">
+          Signed in as {identity?.name} — you’re pre-assigned as the waiter on orders you start
+          prep on.
+        </p>
+      </Reveal>
+
       <ServiceQueue orders={orders} onOpen={openOrder} />
 
       <AnimatePresence>

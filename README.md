@@ -8,13 +8,13 @@ complains/rates when delayed, and pays — while a waiter manages the kitchen qu
 
 ## Features
 
+- Sign-in gate: guests sign in from seeded customers or as a new guest; staff sign in by name
 - Customer menu with per-item price and preparation time
 - Order placement with live waiting-time, VAT breakdown and optional special requests
-- Waiter service queue: assign waiter/chef/bartender, live prep countdowns, mark served
+- Waiter service queue: signed-in waiter is auto-assigned, live prep countdowns, mark served
 - Complaint & rating stored against an order
 - Pretend payment (clearly labelled) with a paid receipt
-- Real persistence — Supabase/Postgres, everything survives a refresh
-- Customer / Waiter role switch with animated transitions (no login required)
+- Sign-in persists across reloads; real persistence via Supabase/Postgres
 
 ## Stack
 
