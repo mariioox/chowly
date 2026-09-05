@@ -1445,21 +1445,6 @@ input[type="text"]::placeholder {
   opacity: 0.85;
 }
 
-.receipt-note {
-  margin-top: var(--space-2);
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 300;
-}
-
-.pay-box .pay-note {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 300;
-  text-align: center;
-  margin-top: 6px;
-}
-
 .receipt-thanks {
   margin-top: var(--space-3);
   color: var(--muted);

@@ -104,7 +104,7 @@ The staff member **signs out and enters the staff entrance**, picking their name
 Back in the customer view (sign back in as that guest), the customer sees their orders with a live **animated status timeline** (auto-refreshing). If an order is `being_prepared` (i.e. delayed), the customer can press **Delayed? Complain & Rate**, pick a 1–5 star rating and write a complaint. Both are stored against that order.
 
 ### Payment
-When the order is `served`, the customer sees a **Pay — PRETEND** button. Pressing it records a payment (clearly labelled **Pretend** in code and UI, method = "Pretend") and marks the order as `paid`, then opens an elegant **receipt** with the itemised lines, the VAT breakdown and the paid stamp.
+When the order is `served`, the customer sees a **Pay** button. Pressing it records a payment and marks the order as `paid`, then opens an elegant **receipt** with the itemised lines, the VAT breakdown and the paid stamp.
 
 All of the above is saved in Supabase, so refreshing the page keeps every order, complaint and payment.
 
@@ -121,7 +121,7 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
 7. Your order is listed in the service queue. Open it — you're already the waiter — pick a chef and bartender, then **Assign & Start Prep** — watch its readiness countdown start.
 8. Mark it **as Served**.
 9. **Sign out**, then **Dine in as a guest** again as the same guest. Your order shows `served` on the animated timeline. (If it were `being_prepared`, you could complain and rate.)
-10. Tap **Pay — PRETEND**. A receipt opens with the itemised lines and VAT breakdown; the order becomes `paid`.
+10. Tap **Pay**. A receipt opens with the itemised lines and VAT breakdown; the order becomes `paid`.
 11. Refresh the page — you're still signed in and everything is still there, proving real persistence.
 
 ---

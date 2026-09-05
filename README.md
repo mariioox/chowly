@@ -13,7 +13,7 @@ complains/rates when delayed, and pays — while a waiter manages the kitchen qu
 - Order placement with live waiting-time, VAT breakdown and optional special requests
 - Waiter service queue: signed-in waiter is auto-assigned, live prep countdowns, mark served
 - Complaint & rating stored against an order
-- Pretend payment (clearly labelled) with a paid receipt
+- Payment with a paid receipt
 - Sign-in persists across reloads; real persistence via Supabase/Postgres
 
 ## Stack
