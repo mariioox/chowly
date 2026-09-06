@@ -19,10 +19,12 @@ import {
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
+import { useNow } from '@/lib/useNow';
 import { fmt, shortId, splitVat, VAT_RATE } from '@/lib/format';
 
 export default function CustomerView() {
   const toast = useToast();
+  const now = useNow(5000);
   const [restaurants, setRestaurants] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -420,6 +422,11 @@ export default function CustomerView() {
               Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
               <strong>{fmt(recentOrder.total_amount)}</strong>
             </p>
+            {recentOrder.waiter_staff?.name && (
+              <p className="note">
+                Your waiter: <strong>{recentOrder.waiter_staff.name}</strong>
+              </p>
+            )}
             <div className="confirm-sum">
               <div className="line">
                 <span>Subtotal (excl. VAT)</span>
@@ -470,6 +477,7 @@ export default function CustomerView() {
                   order={o}
                   statusLabel={statusLabel}
                   fmt={fmt}
+                  now={now}
                   onComplain={() => openComplain(o)}
                   onPay={() => pay(o)}
                   onViewReceipt={() => viewReceipt(o)}
@@ -594,6 +602,7 @@ export default function CustomerView() {
                       ).toLocaleString()
                     : ''}
                 </span>
+                {receiptOrder.waiter_staff?.name && <span>Waiter: {receiptOrder.waiter_staff.name}</span>}
               </div>
               <div className="receipt-items">
                 {receiptOrder.order_items?.map((it) => (
@@ -680,7 +689,18 @@ function MenuItemRow({ item, qty, add }) {
   );
 }
 
-function OrderCard({ order, statusLabel, fmt, onComplain, onPay, onViewReceipt }) {
+function OrderCard({ order, statusLabel, fmt, now, onComplain, onPay, onViewReceipt }) {
+  const baseTime =
+    order.status === 'being_prepared' && order.updated_at ? order.updated_at : order.created_at;
+  const deadline = baseTime
+    ? new Date(baseTime).getTime() + (Number(order.waiting_time) || 0) * 60000
+    : null;
+  const delayed = deadline !== null && now >= deadline;
+  const minsLate = deadline ? Math.max(0, Math.floor((now - deadline) / 60000)) : 0;
+  const estReady = deadline
+    ? new Date(deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : null;
+
   return (
     <div className="order-card card">
       <div className="head">
@@ -690,11 +710,18 @@ function OrderCard({ order, statusLabel, fmt, onComplain, onPay, onViewReceipt }
       <div className="wait">
         Waiting: <strong>~{order.waiting_time ?? '—'} mins</strong>
       </div>
+      {order.status === 'being_prepared' && (
+        <div className={`wait ${delayed ? 'wait-danger' : ''}`}>
+          {delayed
+            ? `Delayed by ~${minsLate} min${minsLate === 1 ? '' : 's'}`
+            : `Est. ready ~${estReady}`}
+        </div>
+      )}
       {order.notes && <div className="request-chip">✎ {order.notes}</div>}
       <OrderTimeline status={order.status} />
       <div className="amount">{fmt(order.total_amount)}</div>
       <div className="actions">
-        {order.status === 'being_prepared' && (
+        {order.status === 'being_prepared' && delayed && (
           <button className="btn btn-red" onClick={onComplain}>
             Delayed? Complain & Rate
           </button>

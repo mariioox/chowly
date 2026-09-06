@@ -81,6 +81,9 @@ function ServiceQueue({ orders, onOpen }) {
                     <span className={`badge ${o.status}`}>{statusLabel[o.status]}</span>
                   </div>
                   <div className="wait">Customer: <strong>{o.customers?.name}</strong></div>
+                  <div className="wait">
+                    Assigned to: <strong>{o.waiter_staff?.name || '—'}</strong>
+                  </div>
                   {inPrep ? (
                     <Countdown baseTime={baseTimeOf(o)} waitingMinutes={o.waiting_time} />
                   ) : (
@@ -160,7 +163,7 @@ export default function WaiterView() {
 
   const beginPrep = async () => {
     if (!waiterId || !chefId || !bartenderId)
-      return toast('Assign the waiter, chef and bartender.');
+      return toast('Select the waiter, chef and bartender.');
     setSaving(true);
     try {
       await updateOrderStatus(openOrderId, {
@@ -169,11 +172,11 @@ export default function WaiterView() {
         bartender_id: bartenderId,
         status: 'being_prepared',
       });
-      toast('Order assigned and marked as being prepared.');
+      toast(`Prep started by ${orderDetail.waiter_staff?.name || 'the waiter'}.`);
       closeModal();
       loadActive();
     } catch (e) {
-      toast('Assignment failed: ' + e.message);
+      toast('Starting prep failed: ' + e.message);
     } finally {
       setSaving(false);
     }
@@ -275,7 +278,7 @@ export default function WaiterView() {
                 </>
               )}
 
-              <span className="field-label">Waiter</span>
+              <span className="field-label">Waiter (assigned on order)</span>
               <select value={waiterId} onChange={(e) => setWaiterId(e.target.value)}>
                 <option value="">— select waiter —</option>
                 {byRole('Waiter').map((s) => (
@@ -305,7 +308,7 @@ export default function WaiterView() {
                 </button>
                 {orderDetail.status === 'placed' && (
                   <button className="btn btn-primary u-grow2" disabled={saving} onClick={beginPrep}>
-                    Assign & Start Prep
+                    Start Prep
                   </button>
                 )}
                 {orderDetail.status === 'being_prepared' && (

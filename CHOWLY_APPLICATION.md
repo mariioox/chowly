@@ -97,10 +97,23 @@ A customer on the Guest face picks **who they are** from the seeded customers (S
 The customer taps **Add** on items. A live order summary appears (the cart) with each line item, the running total, and the estimated waiting time (the longest single-item prep time), plus the full **VAT breakdown** (Subtotal excl. VAT → VAT → Total incl. VAT). An optional **special request** field lets the customer note allergies or preferences, which is saved with the order and shown to the waiter. Tapping **Submit Order** creates the order, which is written to the database. The customer immediately sees an animated confirmation with their order id, the VAT breakdown, the waiting time and the total.
 
 ### Order assignment (waiter)
-The user flips the medallion to **Waiter**. A **service queue** shows every incoming order with live counts (placed / in prep / overdue) and, once prep starts, a **countdown to readiness**; orders that run past their deadline turn red and are counted as overdue. Opening an order shows its items and lets the waiter pick the **waiter**, **chef** and **bartender** from the staff list, then taps **Assign & Start Prep**, which stamps the prep timestamp and moves the order to `being_prepared`. Later the waiter taps **Mark as Served** to move it to `served`. The customer's request note, if any, is surfaced on the card and in the modal.
+As soon as the customer submits, the order is **assigned to a waiter** — the system picks the
+**least-busy waiter** at that restaurant and the confirmation card shows "Your waiter". The user flips
+the medallion to **Waiter**. A **service queue** shows every incoming order, each stamped
+**Assigned to: <waiter>**, with live counts (placed / in prep / overdue) and, once prep starts, a
+**countdown to readiness**; orders that run past their deadline turn red and are counted as overdue.
+Opening an order shows its items; the **waiter is already filled in** (still editable if needed) and
+the waiter completes the order details by picking the **chef** and **bartender** from the staff
+list, then taps **Start Prep**, which stamps the prep timestamp and moves the order to
+`being_prepared`. Later the waiter taps **Mark as Served** to move it to `served`. The customer's
+request note, if any, is surfaced on the card and in the modal.
 
 ### Complaint and rating
-Back on the **Guest** face, the customer sees their orders with a live **animated status timeline** (auto-refreshing). If an order is `being_prepared` (i.e. delayed), the customer can press **Delayed? Complain & Rate**, pick a 1–5 star rating and write a complaint. Both are stored against that order.
+A **serious delay** is defined as an order that is `being_prepared` (prep has started) *and* whose
+advertised waiting time has elapsed — the same deadline the waiter queue counts as overdue while the
+customer's card shows **Est. ready ~HH:MM** and flips to **⚠ Delayed by ~X mins**. Only then does the
+**Delayed? Complain & Rate** button appear. The customer picks a 1–5 star rating and writes a
+complaint; both are stored against that order.
 
 ### Payment
 When the order is `served`, the customer sees a **Pay** button. Pressing it records a payment and marks the order as `paid`, then opens an elegant **receipt** with the itemised lines, the VAT breakdown and the paid stamp.
@@ -115,12 +128,18 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
 2. **Step 1** — pick a customer (e.g. "Ade Johnson").
 3. **Step 2** — choose a restaurant, e.g. **Chowly Grill**.
 4. Add some items — e.g. Grilled Chicken and a Fresh Orange Juice. Watch your cart, the VAT breakdown and the estimate update. Optionally add a special request.
-5. Tap **Submit Order**. Note your order id and waiting time.
+5. Tap **Submit Order**. Note your order id, waiting time and the waiter auto-assigned to you.
 6. Flip the **medallion** in the top bar to **Waiter**.
-7. Your order is listed in the service queue. Open it, assign a waiter, chef and bartender, then **Assign & Start Prep** — watch its readiness countdown start.
+7. Your order is listed in the service queue as **Assigned to: <that waiter>**. Open it — the waiter
+   is already selected — pick the chef and bartender, then **Start Prep** and watch the readiness
+   countdown start.
 8. Mark it **as Served**.
-9. Flip the **medallion** back to **Guest**. Your order shows `served` on the animated timeline. (If it were `being_prepared`, you could complain and rate.)
-10. Tap **Pay**. A receipt opens with the itemised lines and VAT breakdown; the order becomes `paid`.
+9. Flip the **medallion** back to **Guest**. Your order shows `served` on the animated timeline.
+   (Had a serious delay happened — prep time elapsed while still `being_prepared` — the card flips to
+   **⚠ Delayed by ~X mins** and **Delayed? Complain & Rate** appears. Quickest way: order a
+   Coca-Cola, whose prep time is 2 minutes.)
+10. Tap **Pay**. A receipt opens with the itemised lines, the VAT breakdown and your waiter; the order
+    becomes `paid`.
 11. Refresh the page — everything is still there, proving real persistence.
 
 ---

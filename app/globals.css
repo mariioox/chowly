@@ -721,6 +721,11 @@ button {
   font-weight: 500;
 }
 
+.order-card .wait-danger,
+.order-card .wait-danger strong {
+  color: var(--red);
+}
+
 .order-card .amount {
   font-family: var(--font-serif);
   font-size: 18px;

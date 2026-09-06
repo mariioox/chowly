@@ -1,7 +1,8 @@
 # Chowly — Digital Dining Platform
 
 A fine-dining dining-room app where a customer browses a restaurant's menu, places an order, waits,
-complains/rates when delayed, and pays — while a waiter manages the kitchen queue and assigns staff.
+complains/rates when delayed, and pays — while the least-busy waiter is auto-assigned and runs the
+kitchen queue, starting prep and marking orders served.
 
 **Live app:** https://chowly-two.vercel.app/
 **Repository:** https://github.com/mariioox/chowly
@@ -10,9 +11,9 @@ complains/rates when delayed, and pays — while a waiter manages the kitchen qu
 
 - Medallion-flip switch to act as Customer or Waiter — no logins, just roles
 - Customer picker ("who is ordering") with a menu showing price and prep time per item
-- Order placement with live waiting-time, VAT breakdown and optional special requests
-- Waiter service queue: assign waiter/chef/bartender, live prep countdowns, mark served
-- Complaint & rating stored against an order
+- Order placement: auto-assigned to the least-busy waiter, live waiting-time, VAT breakdown and optional special requests
+- Waiter service queue: waiter pre-filled, pick chef/bartender, prep countdowns, mark served
+- Complaint & rating gated on a serious delay (prep time elapsed while still preparing)
 - Payment with a paid receipt
 - Real persistence — Supabase/Postgres, everything survives a refresh
 
