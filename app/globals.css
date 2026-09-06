@@ -112,70 +112,61 @@ button {
   text-transform: uppercase;
 }
 
-.account {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.role-coin {
+  background: none;
+  border: none;
+  padding: 0;
+  width: 54px;
+  height: 54px;
+  perspective: 600px;
 }
 
-.account-pill {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 5px 16px 5px 6px;
+.role-coin-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
 }
 
-.account-avatar {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
+.role-coin-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   border-radius: 50%;
+  border: 1px solid var(--primary);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.role-coin-front {
+  color: var(--primary);
+}
+
+.role-coin-back {
+  transform: rotateY(180deg);
   background: var(--text);
+  border-color: var(--text);
   color: #faf9f6;
+}
+
+.role-coin .coin-glyph {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.role-coin .coin-label {
   font-family: var(--font-serif);
-  font-size: 15px;
+  font-size: 10px;
   font-weight: 600;
-}
-
-.account-name {
-  font-weight: 600;
-  font-size: 13px;
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.account-role {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--muted);
-  border-left: 1px solid var(--border);
-  padding-left: 10px;
-}
-
-.account-out {
-  border: 1px solid var(--border);
-  background: #ffffff;
-  color: var(--muted);
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-}
-
-.account-out:hover {
-  color: var(--red);
-  border-color: var(--red);
 }
 
 /* ============================================================
@@ -1454,94 +1445,11 @@ input[type="text"]::placeholder {
 }
 
 /* ============================================================
-   Sign-in gate
-   ============================================================ */
-
-.signin {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 48px 24px 64px;
-}
-
-.signin-step {
-  min-height: 320px;
-}
-
-.signin-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-}
-
-.choice-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  text-align: left;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  transition: all 0.25s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.choice-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-md);
-}
-
-.choice-icon {
-  font-size: 30px;
-  margin-bottom: 10px;
-}
-
-.choice-title {
-  font-family: var(--font-serif);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.choice-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.signin-divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin: var(--space-3) 0 var(--space-2);
-}
-
-.signin-divider::before,
-.signin-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.muted-inline {
-  color: var(--muted);
-  font-weight: 300;
-}
-
-/* ============================================================
    Focus visibility (keyboard)
    ============================================================ */
 
 .btn:focus-visible,
-.choice-card:focus-visible,
+.role-coin:focus-visible,
 .qty-box button:focus-visible,
 .customer-option:focus-visible,
 .restaurant-card:focus-visible,
@@ -1574,18 +1482,6 @@ input:focus-visible {
 @media (max-width: 640px) {
   .container {
     padding: var(--space-4) 16px var(--space-5);
-  }
-
-  .signin {
-    padding: 32px 16px 48px;
-  }
-
-  .signin-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .account-name {
-    max-width: 100px;
   }
 
   .topbar {

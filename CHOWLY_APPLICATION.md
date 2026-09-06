@@ -10,7 +10,7 @@
 
 ### The stack
 - **Next.js 16** with the App Router and React client components for the whole UI.
-- **Supabase** (PostgreSQL) for real, persistent storage. Sign-in is a themed gate that picks the active guest or staff member from the seeded `customers` and `staff` tables — there is no hosted authentication, so the app talks to the database directly from the browser using the project's publishable key.
+- **Supabase** (PostgreSQL) for real, persistent storage. No login is required, so the app talks to the database directly from the browser using the project's publishable key.
 - Deployed on **Vercel**.
 - Version control with **git**; the commit history shows the work as it was done.
 
@@ -19,11 +19,10 @@
 chowly/
   app/
     layout.js            # root layout, wraps everything in a toast provider
-    page.js              # entry point — owns the sign-in session (localStorage) + view transition
+    page.js              # entry point — medallion-flip role switch + animated view transition
     globals.css          # all styling
   components/
-    SignIn.js            # welcome gate — guest sign-in or staff entrance
-    AccountMenu.js       # topbar account pill (who's acting + sign out)
+    MedallionSwitch.js   # topbar coin that flips (3D) between Customer and Waiter
     CustomerView.js      # the customer side: menu, order, tracking, timeline, complaint, payment, receipt
     WaiterView.js        # the waiter side: queue, assignment, prep timers, mark served
     OrderTimeline.js     # animated 4-step customer prep/outcome timeline
@@ -44,7 +43,7 @@ The original approved entity model (Restaurant, Customer, MenuItem, Waiter, Chef
 1. **Waiter, Chef and Bartender were merged into one `staff` table** with a `role` column. Requirement #3 says the waiter records the chef and bartender **from a staff list you loaded yourself** — one list is cleaner and still captures all three roles as foreign keys on the order. This also simplifies the seed data.
 2. **`prep_time_mins` was added to `menu_items`.** Requirement #1 says each item carries a preparation time; the customer's waiting time is then shown as the maximum preparation time across the items in their order.
 
-So the final tables are: `restaurants`, `customers`, `menu_items`, `staff`, `orders`, `order_items` (the M:M bridge), `complaints`, and `payments`. RLS is disabled on all tables because the assignment explicitly does not require logins. A **sign-in gate** selects the active guest or staff member from the seeded tables (guests can also type a new name, which is matched or inserted into `customers`), and the choice is remembered in the browser between visits — no hosted authentication is needed.
+So the final tables are: `restaurants`, `customers`, `menu_items`, `staff`, `orders`, `order_items` (the M:M bridge), `complaints`, and `payments`. RLS is disabled on all tables because the assignment explicitly does not require logins — a simple role switch is enough, so switching roles is a single flip of a medallion-style control at the top right.
 
 Mid-build polish added three columns to `orders` (`vat_amount`, `notes`, `updated_at`) plus a **5% VAT** rule: menu prices are including VAT, and the cart/confirmation/receipt break out **Subtotal (excl. VAT) → VAT (5%) → Total incl. VAT**. The order records the exact computed VAT amount so it can be shown again later. An **optional special-request note** is saved with each order (`notes`), a **prep timestamp** (`updated_at`) is stamped every time the status changes, and live prep deadlines are derived from it. Every query falls back to a computed value when a column is absent, so the app stays robust.
 
@@ -75,7 +74,7 @@ AI was used as a pair-programming tool throughout the build.
 - The generated schema, styling, and the customer/waiter component structure.
 
 **What was rejected:**
-- A hosted authentication system (Supabase Auth with email/password and RLS policies) — over-engineered for this assignment since logins are not required. Instead a themed **sign-in gate** over the seeded `customers` and `staff` tables picks who is acting, with no passwords and no account management.
+- A hosted authentication system (Supabase Auth with email/password and RLS policies) — over-engineered for this assignment since logins are not required; a simple role switch is used instead.
 
 **What had to be corrected / verified by hand:**
 - The npm registry on the machine was misconfigured (pointing to a slow mirror), which broke package installation — fixed by switching back to the official registry.
@@ -86,22 +85,22 @@ AI was used as a pair-programming tool throughout the build.
 
 ## 3. Behaviour of the application, step by step
 
-The story runs exactly as in the assignment, from menu to payment. Two presentation notes: the customer side is styled as **light fine dining** (warm ivory, serif accents) while the **waiter side is a refined service pad** — same brand, but a distinctly operational, tablet-first layout. Motion (framer-motion) is used throughout: scroll reveals, a sign-in gate with animated steps, spring modals and an animated prep/status timeline.
+The story runs exactly as in the assignment, from menu to payment. Two presentation notes: the customer side is styled as **light fine dining** (warm ivory, serif accents) while the **waiter side is a refined service pad** — same brand, but a distinctly operational, tablet-first layout. Motion (framer-motion) is used throughout: scroll reveals, the flipping role medallion, spring modals and an animated prep/status timeline.
 
-### Signing in
-Opening the app lands on a **Welcome gate** with two choices. **Dine in as a guest** signs in from the seeded customers or as a new guest (typing a name — an existing name re-signs into that guest; otherwise a row is created). **Staff entrance** signs in as any waiter in the staff list, grouped by restaurant. The active account shows in the top bar with a sign-out action, and the choice is remembered in `localStorage` across reloads.
+### Switching roles
+There is no login — the assignment explicitly says none is required. At the top right, a **medallion-style coin** shows the active role: **Guest** on one face and **Waiter** on the other. Clicking it spins it in 3D (framer-motion `rotateY` spring) and swaps the whole view beneath it in a cross-fade. One flip to go back and forth.
 
 ### Menu browsing
-A signed-in guest picks a **restaurant**. The restaurant's menu loads split into **Mains** and **Beverages**, each item showing its name, price, and preparation time.
+A customer on the Guest face picks **who they are** from the seeded customers (Step 1) and chooses a **restaurant** (Step 2). The restaurant's menu loads split into **Mains** and **Beverages**, each item showing its name, price, and preparation time.
 
 ### Order placement
 The customer taps **Add** on items. A live order summary appears (the cart) with each line item, the running total, and the estimated waiting time (the longest single-item prep time), plus the full **VAT breakdown** (Subtotal excl. VAT → VAT → Total incl. VAT). An optional **special request** field lets the customer note allergies or preferences, which is saved with the order and shown to the waiter. Tapping **Submit Order** creates the order, which is written to the database. The customer immediately sees an animated confirmation with their order id, the VAT breakdown, the waiting time and the total.
 
 ### Order assignment (waiter)
-The staff member **signs out and enters the staff entrance**, picking their name. A **service queue** shows every incoming order with live counts (placed / in prep / overdue) and, once prep starts, a **countdown to readiness**; orders that run past their deadline turn red and are counted as overdue. Opening an order shows its items and lets the waiter pick the **chef** and **bartender** from the staff list — the **waiter is automatically the signed-in staff member** — then taps **Assign & Start Prep**, which stamps the prep timestamp and moves the order to `being_prepared`. Later the waiter taps **Mark as Served** to move it to `served`. The customer's request note, if any, is surfaced on the card and in the modal.
+The user flips the medallion to **Waiter**. A **service queue** shows every incoming order with live counts (placed / in prep / overdue) and, once prep starts, a **countdown to readiness**; orders that run past their deadline turn red and are counted as overdue. Opening an order shows its items and lets the waiter pick the **waiter**, **chef** and **bartender** from the staff list, then taps **Assign & Start Prep**, which stamps the prep timestamp and moves the order to `being_prepared`. Later the waiter taps **Mark as Served** to move it to `served`. The customer's request note, if any, is surfaced on the card and in the modal.
 
 ### Complaint and rating
-Back in the customer view (sign back in as that guest), the customer sees their orders with a live **animated status timeline** (auto-refreshing). If an order is `being_prepared` (i.e. delayed), the customer can press **Delayed? Complain & Rate**, pick a 1–5 star rating and write a complaint. Both are stored against that order.
+Back on the **Guest** face, the customer sees their orders with a live **animated status timeline** (auto-refreshing). If an order is `being_prepared` (i.e. delayed), the customer can press **Delayed? Complain & Rate**, pick a 1–5 star rating and write a complaint. Both are stored against that order.
 
 ### Payment
 When the order is `served`, the customer sees a **Pay** button. Pressing it records a payment and marks the order as `paid`, then opens an elegant **receipt** with the itemised lines, the VAT breakdown and the paid stamp.
@@ -112,17 +111,17 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
 
 ## 4. How to use it (walkthrough for a stranger)
 
-1. Open the deployed link. You land on the **Welcome gate**.
-2. **Dine in as a guest** — pick a seeded name (e.g. "Ade Johnson") or type a new name to continue as a new guest.
-3. Choose a restaurant, e.g. **Chowly Grill**.
+1. Open the deployed link. You land on the **Customer** view (Guest face).
+2. **Step 1** — pick a customer (e.g. "Ade Johnson").
+3. **Step 2** — choose a restaurant, e.g. **Chowly Grill**.
 4. Add some items — e.g. Grilled Chicken and a Fresh Orange Juice. Watch your cart, the VAT breakdown and the estimate update. Optionally add a special request.
 5. Tap **Submit Order**. Note your order id and waiting time.
-6. **Sign out**, then enter the **Staff entrance** and pick your name.
-7. Your order is listed in the service queue. Open it — you're already the waiter — pick a chef and bartender, then **Assign & Start Prep** — watch its readiness countdown start.
+6. Flip the **medallion** in the top bar to **Waiter**.
+7. Your order is listed in the service queue. Open it, assign a waiter, chef and bartender, then **Assign & Start Prep** — watch its readiness countdown start.
 8. Mark it **as Served**.
-9. **Sign out**, then **Dine in as a guest** again as the same guest. Your order shows `served` on the animated timeline. (If it were `being_prepared`, you could complain and rate.)
+9. Flip the **medallion** back to **Guest**. Your order shows `served` on the animated timeline. (If it were `being_prepared`, you could complain and rate.)
 10. Tap **Pay**. A receipt opens with the itemised lines and VAT breakdown; the order becomes `paid`.
-11. Refresh the page — you're still signed in and everything is still there, proving real persistence.
+11. Refresh the page — everything is still there, proving real persistence.
 
 ---
 
