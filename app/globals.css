@@ -567,22 +567,27 @@ button {
 }
 
 /* ============================================================
-   Always-on Order Drawer
+   Customer main row (tab content + in-flow order drawer)
+   ============================================================ */
+
+.customer-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* ============================================================
+   Always-on Order Drawer (in flow — never covers the menu)
    ============================================================ */
 
 .order-drawer {
-  position: fixed;
-  top: var(--space-3);
-  right: var(--space-3);
-  bottom: var(--space-3);
-  width: 320px;
-  max-width: calc(100vw - 48px);
+  width: 100%;
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 24px 60px rgba(31, 20, 4, 0.28);
   padding: var(--space-4);
-  z-index: 40;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -593,6 +598,10 @@ button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-3);
+}
+
+.order-drawer .drawer-total-bar {
+  display: none;
 }
 
 .order-drawer .drawer-cta {
@@ -664,17 +673,55 @@ button {
   margin-top: var(--space-2);
 }
 
+@media (min-width: 900px) {
+  .customer-row.has-drawer {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+  .order-drawer {
+    position: sticky;
+    top: var(--space-3);
+  }
+}
+
 @media (max-width: 640px) {
   .order-drawer {
+    position: fixed;
     top: auto;
+    left: 0;
     right: 0;
     bottom: 0;
-    left: 0;
     width: 100%;
     max-width: none;
-    max-height: 78vh;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
     border-bottom: none;
+    padding: 10px 16px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 -8px 30px rgba(31, 20, 4, 0.18);
+    z-index: 40;
+  }
+  .order-drawer .drawer-head {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+  .order-drawer .label,
+  .order-drawer .drawer-lines,
+  .order-drawer .total,
+  .order-drawer .note {
+    display: none;
+  }
+  .order-drawer .drawer-total-bar {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-serif);
+    color: var(--primary-dark);
+    white-space: nowrap;
   }
 }
 
@@ -1799,7 +1846,7 @@ input:focus-visible {
 
 @media (max-width: 640px) {
   .container {
-    padding: var(--space-4) 16px var(--space-5);
+    padding: var(--space-4) 16px calc(var(--space-5) + 64px);
   }
 
   .topbar {

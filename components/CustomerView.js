@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import OrderTimeline from '@/components/OrderTimeline';
@@ -61,6 +61,15 @@ export default function CustomerView() {
   const [placing, setPlacing] = useState(false);
   const [tab, setTab] = useState('restaurants');
   const orderAnchorRef = useRef(null);
+  const isNarrow = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia('(max-width: 640px)');
+      mq.addEventListener('change', cb);
+      return () => mq.removeEventListener('change', cb);
+    },
+    () => window.matchMedia('(max-width: 640px)').matches,
+    () => false
+  );
 
   const loadOrders = useCallback(async () => {
     try {
@@ -211,6 +220,7 @@ export default function CustomerView() {
       subtotal: cart[item.id] * Number(item.price),
     }));
   const totalAmount = cartItems.reduce((s, it) => s + it.subtotal, 0);
+  const cartCount = cartItems.reduce((s, it) => s + it.quantity, 0);
   const vat = splitVat(totalAmount);
   const waitingTime = cartItems.length
     ? Math.max(...cartItems.map((it) => {
@@ -451,6 +461,9 @@ export default function CustomerView() {
       </div>
 
       {/* Restaurants tab */}
+      <div
+        className={`customer-row${cartItems.length > 0 && tab !== 'order' ? ' has-drawer' : ''}`}
+      >
       {tab === 'restaurants' && !selectedRestaurant && (
         <div className="restaurants-view">
           <Reveal delay={0.05}>
@@ -690,13 +703,16 @@ export default function CustomerView() {
         {cartItems.length > 0 && tab !== 'order' && (
           <motion.div
             className="order-drawer"
-            initial={{ x: 400 }}
-            animate={{ x: 0 }}
-            exit={{ x: 400 }}
+            initial={isNarrow ? { y: 120 } : { x: 400 }}
+            animate={{ x: 0, y: 0 }}
+            exit={isNarrow ? { y: 120 } : { x: 400 }}
             transition={{ type: 'spring', stiffness: 280, damping: 32 }}
           >
             <div className="drawer-head">
               <span className="label">Your Order</span>
+              <span className="drawer-total-bar">
+                {cartCount} {cartCount === 1 ? 'item' : 'items'} · {fmt(totalAmount)}
+              </span>
               <button className="drawer-cta" onClick={() => setTab('order')}>
                 View & submit →
               </button>
@@ -731,6 +747,7 @@ export default function CustomerView() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
 
       {/* Complaint modal */}
       <AnimatePresence>
