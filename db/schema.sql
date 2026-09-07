@@ -131,7 +131,7 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M109','R001','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
  ('M111','R001','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop'),
  ('M112','R001','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
- ('M113','R001','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ 
  ('M114','R001','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
  ('M115','R001','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
  ('M116','R001','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
@@ -152,7 +152,7 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M209','R002','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
  ('M211','R002','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop'),
  ('M212','R002','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
- ('M213','R002','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ 
  ('M214','R002','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
  ('M215','R002','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
  ('M216','R002','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
@@ -199,7 +199,7 @@ alter table payments         disable row level security;
 -- menu automatically from the seed above and never need this block.
 insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_time_mins,image_url) values
  ('M112','R001','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
- ('M113','R001','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ 
  ('M114','R001','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
  ('M115','R001','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
  ('M116','R001','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
@@ -211,7 +211,7 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M122','R001','Iced Latte','Double espresso, chilled milk poured over ice','Drink',5000,4,'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop'),
  ('M123','R001','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop'),
  ('M212','R002','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
- ('M213','R002','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ 
  ('M214','R002','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
  ('M215','R002','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
  ('M216','R002','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
