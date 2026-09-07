@@ -10,6 +10,7 @@ import {
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
+import { useKeepScroll } from '@/lib/useKeepScroll';
 import { useNow } from '@/lib/useNow';
 import { fmt, shortId } from '@/lib/format';
 import OrderTimeline from '@/components/OrderTimeline';
@@ -202,6 +203,7 @@ export default function WaiterView() {
   };
 
   const modalFocusRef = useModal(orderDetail !== null, closeModal);
+  const modalScrollRef = useKeepScroll();
 
   if (loading) {
     return (
@@ -242,6 +244,7 @@ export default function WaiterView() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="order-modal-title"
+              ref={modalScrollRef}
               initial={{ y: 24, scale: 0.96, opacity: 0 }}
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 12, scale: 0.97, opacity: 0 }}

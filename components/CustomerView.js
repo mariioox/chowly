@@ -20,6 +20,7 @@ import {
 } from '@/lib/data';
 import { useToast } from '@/components/Toast';
 import { useModal } from '@/lib/useModal';
+import { useKeepScroll } from '@/lib/useKeepScroll';
 import { useNow } from '@/lib/useNow';
 import { fmt, shortId, splitVat, VAT_RATE } from '@/lib/format';
 
@@ -52,6 +53,8 @@ export default function CustomerView() {
   const [submitting, setSubmitting] = useState(false);
   const complainTitleRef = useModal(complainOrder !== null, () => setComplainOrder(null));
   const receiptFocusRef = useModal(receiptOrder !== null, () => setReceiptOrder(null));
+  const complaintScrollRef = useKeepScroll();
+  const receiptScrollRef = useKeepScroll();
 
   const [placing, setPlacing] = useState(false);
 
@@ -574,6 +577,7 @@ export default function CustomerView() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="complain-title"
+              ref={complaintScrollRef}
               initial={{ y: 24, scale: 0.96, opacity: 0 }}
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 12, scale: 0.97, opacity: 0 }}
@@ -646,6 +650,7 @@ export default function CustomerView() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="receipt-title"
+              ref={receiptScrollRef}
               initial={{ y: 28, scale: 0.96, opacity: 0 }}
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 16, scale: 0.97, opacity: 0 }}
