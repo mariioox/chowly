@@ -39,5 +39,5 @@ edge and talks to Supabase straight from the browser.
 
 ## Assignment deliverables
 
-See `CHOWLY_APPLICATION.md` for the full build document (how it was built, AI usage, behaviour
-walkthrough) that accompanies this submission.
+The accompanying application document (submitted alongside this repository) explains how the app was
+built, how AI was used, and walks through the full customer → waiter behaviour on the deployed link.
