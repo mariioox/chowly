@@ -9,6 +9,7 @@ import {
   getRestaurants,
   getMenu,
   getCustomers,
+  createCustomer,
   placeOrder,
   getOrders,
   getOrderDetails,
@@ -30,6 +31,11 @@ export default function CustomerView() {
   const [loading, setLoading] = useState(true);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [customer, setCustomer] = useState(null);
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [addingCustomer, setAddingCustomer] = useState(false);
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState({});
 
@@ -104,6 +110,25 @@ export default function CustomerView() {
     setMenu([]);
     setCart({});
     setNotes('');
+  };
+
+  const saveNewCustomer = async () => {
+    if (!newName.trim()) return toast('Enter the customer name.');
+    setAddingCustomer(true);
+    try {
+      const created = await createCustomer({ name: newName, phone: newPhone, email: newEmail });
+      setCustomers((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      setCustomer(created);
+      setShowAddCustomer(false);
+      setNewName('');
+      setNewPhone('');
+      setNewEmail('');
+      toast(`Added ${created.name} — they are now the customer.`);
+    } catch (e) {
+      toast('Could not add customer: ' + e.message);
+    } finally {
+      setAddingCustomer(false);
+    }
   };
 
   const add = (item, delta) => {
@@ -263,6 +288,50 @@ export default function CustomerView() {
               </button>
             ))}
           </div>
+          <div className="customer-add">
+            <button className="btn btn-ghost" onClick={() => setShowAddCustomer((s) => !s)}>
+              {showAddCustomer ? 'Cancel' : '+ Add a new customer'}
+            </button>
+          </div>
+          <AnimatePresence>
+            {showAddCustomer && (
+              <motion.div
+                className="customer-form"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="customer-form-row">
+                  <input
+                    type="text"
+                    placeholder="Full name"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                  />
+                </div>
+                <div className="customer-form-row">
+                  <input
+                    type="text"
+                    placeholder="Phone (optional)"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Email (optional)"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                  />
+                </div>
+                <div className="customer-form-actions">
+                  <button className="btn btn-green" disabled={addingCustomer} onClick={saveNewCustomer}>
+                    {addingCustomer ? 'Adding…' : 'Add customer'}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </Reveal>
 
