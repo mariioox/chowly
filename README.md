@@ -14,7 +14,7 @@ kitchen queue, starting prep and marking orders served.
 - Order placement: auto-assigned to the least-busy waiter, live waiting-time, VAT breakdown and optional special requests
 - Waiter service queue: waiter pre-filled, pick chef/bartender, prep countdowns, mark served
 - Complaint & rating gated on a serious delay (prep time elapsed while still preparing)
-- Payment with a paid receipt
+- Payment clearly labelled as pretend — recorded as a payment, marked paid, with a printable receipt
 - Real persistence — Supabase/Postgres, everything survives a refresh
 
 ## Stack

@@ -640,6 +640,9 @@ export default function CustomerView() {
               <div className="receipt-thanks">
                 Thank you for dining with {receiptOrder.restaurants?.name}.
               </div>
+              <div className="receipt-note">
+                Pretend payment — recorded for the demo, no money moves.
+              </div>
               <div className="u-mt16">
                 <button
                   className="btn btn-ghost"
@@ -731,6 +734,7 @@ function OrderCard({ order, statusLabel, fmt, now, onComplain, onPay, onViewRece
             <button className="btn btn-green" onClick={onPay}>
               Pay
             </button>
+            <div className="pay-note">Pretend payment — recorded for the demo.</div>
           </div>
         )}
         {order.status === 'paid' && (

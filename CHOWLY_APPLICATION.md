@@ -72,6 +72,9 @@ AI was used as a pair-programming tool throughout the build.
 **What was accepted:**
 - The overall data model and the decision to merge the three staff roles into one `staff` table.
 - The generated schema, styling, and the customer/waiter component structure.
+- The explicit **pretend-payment label** the requirement asks for — the Pay button carries a
+  "Pretend payment" caption and the receipt repeats it, so the payment is clearly labelled as
+  pretend while still being fully recorded against the order.
 
 **What was rejected:**
 - A hosted authentication system (Supabase Auth with email/password and RLS policies) — over-engineered for this assignment since logins are not required; a simple role switch is used instead.
@@ -116,7 +119,7 @@ customer's card shows **Est. ready ~HH:MM** and flips to **⚠ Delayed by ~X min
 complaint; both are stored against that order.
 
 ### Payment
-When the order is `served`, the customer sees a **Pay** button. Pressing it records a payment and marks the order as `paid`, then opens an elegant **receipt** with the itemised lines, the VAT breakdown and the paid stamp.
+When the order is `served`, the customer sees a **Pay** button with an explicit caption — **"Pretend payment — recorded for the demo"** (the requirement says the payment may be pretend but must be clearly labelled as such). Pressing it records a payment and marks the order as `paid`, then opens an elegant **receipt** with the itemised lines, the VAT breakdown, the paid stamp and the same pretend-payment note.
 
 All of the above is saved in Supabase, so refreshing the page keeps every order, complaint and payment.
 
@@ -138,8 +141,8 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
    (Had a serious delay happened — prep time elapsed while still `being_prepared` — the card flips to
    **⚠ Delayed by ~X mins** and **Delayed? Complain & Rate** appears. Quickest way: order a
    Coca-Cola, whose prep time is 2 minutes.)
-10. Tap **Pay**. A receipt opens with the itemised lines, the VAT breakdown and your waiter; the order
-    becomes `paid`.
+10. Tap **Pay** (labelled "Pretend payment — recorded for the demo"). A receipt opens with the
+    itemised lines and VAT breakdown; the order becomes `paid`.
 11. Refresh the page — everything is still there, proving real persistence.
 
 ---
