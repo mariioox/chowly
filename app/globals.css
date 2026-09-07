@@ -57,6 +57,10 @@ body {
   line-height: 1.6;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 h1, h2, h3 {
   font-family: var(--font-serif);
   font-weight: 500;

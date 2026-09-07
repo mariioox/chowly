@@ -39,7 +39,9 @@ export default function CustomerView() {
   const [newEmail, setNewEmail] = useState('');
   const [addingCustomer, setAddingCustomer] = useState(false);
   const [menu, setMenu] = useState([]);
+  const [menuCache, setMenuCache] = useState({});
   const [cart, setCart] = useState({});
+  const [cartRestaurantId, setCartRestaurantId] = useState(null);
   const [activeCat, setActiveCat] = useState('All');
 
   const [recentOrder, setRecentOrder] = useState(null);
@@ -109,6 +111,7 @@ export default function CustomerView() {
   const applyCustomer = (c) => {
     setCustomer(c);
     setCart({});
+    setCartRestaurantId(null);
     setRecentOrder(null);
     setSelectedRestaurant(null);
     setMenu([]);
@@ -137,6 +140,7 @@ export default function CustomerView() {
       Object.keys(cart).length > 0
     ) {
       setCart({});
+      setCartRestaurantId(null);
       toast('Basket cleared — you switched restaurant.');
     }
     setSelectedRestaurant(r);
@@ -145,6 +149,7 @@ export default function CustomerView() {
     try {
       const m = await getMenu(r.id);
       setMenu(m);
+      setMenuCache((prev) => ({ ...prev, [r.id]: m }));
     } catch (e) {
       toast('Could not load menu: ' + e.message);
     }
@@ -153,7 +158,6 @@ export default function CustomerView() {
   const closeMenu = () => {
     setSelectedRestaurant(null);
     setMenu([]);
-    setCart({});
     setNotes('');
   };
 
@@ -200,6 +204,9 @@ export default function CustomerView() {
   };
 
   const add = (item, delta) => {
+    if (delta > 0 && Object.keys(cart).length === 0 && selectedRestaurant) {
+      setCartRestaurantId(selectedRestaurant.id);
+    }
     setCart((prev) => {
       const next = { ...prev };
       const cur = next[item.id] || 0;
@@ -210,8 +217,12 @@ export default function CustomerView() {
     });
   };
 
+  const cachedMenu = Object.values(menuCache).flat();
+  const cartRestaurant = restaurants.find(
+    (r) => r.id === (selectedRestaurant?.id ?? cartRestaurantId)
+  );
   const cartItems = Object.keys(cart)
-    .map((id) => menu.find((m) => m.id === id))
+    .map((id) => cachedMenu.find((m) => m.id === id))
     .filter(Boolean)
     .map((item) => ({
       menu_item_id: item.id,
@@ -224,7 +235,7 @@ export default function CustomerView() {
   const vat = splitVat(totalAmount);
   const waitingTime = cartItems.length
     ? Math.max(...cartItems.map((it) => {
-        const item = menu.find((m) => m.id === it.menu_item_id);
+        const item = cachedMenu.find((m) => m.id === it.menu_item_id);
         return Number(item.prep_time_mins || 0);
       }))
     : 0;
@@ -232,11 +243,13 @@ export default function CustomerView() {
   const submitOrder = async () => {
     if (!customer) return toast('Select which customer is ordering.');
     if (!cartItems.length) return toast('Add at least one item.');
+    const restaurantId = cartRestaurantId ?? selectedRestaurant?.id;
+    if (!restaurantId) return toast('Re-open the restaurant to place your order.');
     setPlacing(true);
     try {
       const order = await placeOrder({
         customerId: customer.id,
-        restaurantId: selectedRestaurant.id,
+        restaurantId,
         items: cartItems,
         totalAmount,
         waitingTime,
@@ -245,6 +258,7 @@ export default function CustomerView() {
       });
       setRecentOrder(order);
       setCart({});
+      setCartRestaurantId(null);
       setNotes('');
       toast('Order placed! Waiting time ~' + waitingTime + ' mins');
       loadOrders();
@@ -552,7 +566,7 @@ export default function CustomerView() {
       {tab === 'order' && (
         <div className="orders-view" ref={orderAnchorRef}>
           <div className="cart card u-mb24">
-            <h2>Your Order{selectedRestaurant ? ' — ' + selectedRestaurant.name : ''}</h2>
+            <h2>Your Order{cartRestaurant ? ' — ' + cartRestaurant.name : ''}</h2>
             {cartItems.length === 0 ? (
               <div className="empty">
                 Nothing in the basket yet. Add items from a restaurant menu.
@@ -561,7 +575,7 @@ export default function CustomerView() {
               <>
                 <AnimatePresence initial={false}>
                   {cartItems.map((it) => {
-                    const item = menu.find((m) => m.id === it.menu_item_id);
+                    const item = cachedMenu.find((m) => m.id === it.menu_item_id);
                     return (
                       <motion.div
                         className="line"
@@ -720,7 +734,7 @@ export default function CustomerView() {
             <div className="drawer-lines">
               <AnimatePresence initial={false}>
                 {cartItems.map((it) => {
-                  const item = menu.find((m) => m.id === it.menu_item_id);
+                  const item = cachedMenu.find((m) => m.id === it.menu_item_id);
                   return (
                     <motion.div
                       className="line"

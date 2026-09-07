@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import CustomerView from '@/components/CustomerView';
 import WaiterView from '@/components/WaiterView';
 import MedallionSwitch from '@/components/MedallionSwitch';
@@ -19,17 +18,12 @@ export default function Home() {
         <MedallionSwitch role={role} onSwitch={setRole} />
       </header>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={role}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {role === 'customer' ? <CustomerView /> : <WaiterView />}
-        </motion.div>
-      </AnimatePresence>
+      <section hidden={role !== 'customer'}>
+        <CustomerView />
+      </section>
+      <section hidden={role !== 'waiter'}>
+        <WaiterView />
+      </section>
     </main>
   );
 }
