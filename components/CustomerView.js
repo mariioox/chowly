@@ -10,6 +10,7 @@ import {
   getMenu,
   getCustomers,
   createCustomer,
+  deleteCustomer,
   placeOrder,
   getOrders,
   getOrderDetails,
@@ -39,6 +40,7 @@ export default function CustomerView() {
   const [addingCustomer, setAddingCustomer] = useState(false);
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState({});
+  const [activeCat, setActiveCat] = useState('All');
 
   const [recentOrder, setRecentOrder] = useState(null);
   const [trackingOrders, setTrackingOrders] = useState([]);
@@ -130,6 +132,7 @@ export default function CustomerView() {
     }
     setSelectedRestaurant(r);
     setNotes('');
+    setActiveCat('All');
     try {
       const m = await getMenu(r.id);
       setMenu(m);
@@ -143,6 +146,29 @@ export default function CustomerView() {
     setMenu([]);
     setCart({});
     setNotes('');
+  };
+
+  const removeCustomer = async (c) => {
+    try {
+      await deleteCustomer(c.id);
+      const remaining = customers.filter((x) => x.id !== c.id);
+      setCustomers(remaining);
+      if (customer?.id === c.id) {
+        if (remaining[0]) {
+          applyCustomer(remaining[0]);
+          toast(`Removed ${c.name} — now ordering as ${remaining[0].name}.`);
+        } else {
+          setCustomer(null);
+          setCart({});
+          setRecentOrder(null);
+          toast(`Removed ${c.name}. Add a customer to continue.`);
+        }
+      } else {
+        toast(`Removed ${c.name}.`);
+      }
+    } catch (err) {
+      toast(`Can't remove ${c.name} — they have orders.`);
+    }
   };
 
   const saveNewCustomer = async () => {
@@ -325,6 +351,17 @@ export default function CustomerView() {
               >
                 <span className="nm">{c.name}</span>
                 {customer?.id === c.id && <em>✓</em>}
+                <span
+                  className="chip-x"
+                  role="button"
+                  aria-label={`Remove ${c.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeCustomer(c);
+                  }}
+                >
+                  ×
+                </span>
               </button>
             ))}
             <button
@@ -462,23 +499,27 @@ export default function CustomerView() {
               <div className="card empty">No menu items found for this restaurant.</div>
             ) : (
               <>
+                {(() => {
+                  const cats = ['All', ...new Set(menu.map((m) => m.item_type))];
+                  return (
+                    <div className="cat-pills" role="tablist" aria-label="Menu categories">
+                      {cats.map((cat) => (
+                        <button
+                          key={cat}
+                          role="tab"
+                          aria-selected={activeCat === cat}
+                          className={`cat-pill ${activeCat === cat ? 'active' : ''}`}
+                          onClick={() => setActiveCat(cat)}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
                 <div className="menu-section">
-                  <h2>Mains</h2>
                   {menu
-                    .filter((m) => m.item_type === 'Food')
-                    .map((item) => (
-                      <MenuItemRow
-                        key={item.id}
-                        item={item}
-                        qty={cart[item.id] || 0}
-                        add={add}
-                      />
-                    ))}
-                </div>
-                <div className="menu-section">
-                  <h2>Beverages</h2>
-                  {menu
-                    .filter((m) => m.item_type === 'Drink')
+                    .filter((m) => activeCat === 'All' || m.item_type === activeCat)
                     .map((item) => (
                       <MenuItemRow
                         key={item.id}

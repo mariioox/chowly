@@ -1133,6 +1133,7 @@ input[type="text"]::placeholder {
 }
 
 .customer-chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1145,6 +1146,34 @@ input[type="text"]::placeholder {
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(4px);
+}
+
+.customer-chip .chip-x {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+  color: #fff;
+  background: var(--red);
+  border: 1.5px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.customer-chip:hover .chip-x,
+.customer-chip .chip-x:focus {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .customer-chip .nm {
@@ -1200,6 +1229,43 @@ input[type="text"]::placeholder {
 
 .customer-bar-form .customer-form-actions {
   margin-top: var(--space-1);
+}
+
+/* ============================================================
+   Menu Category Pills
+   ============================================================ */
+
+.cat-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 var(--space-4);
+}
+
+.cat-pill {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text-secondary);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.cat-pill.active {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(125, 103, 74, 0.25);
 }
 
 /* ============================================================
