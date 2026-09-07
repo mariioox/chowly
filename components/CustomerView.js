@@ -104,9 +104,11 @@ export default function CustomerView() {
     (async () => {
       await loadOrders();
     })();
-    const id = setInterval(() => loadOrders(), 5000);
+    const id = setInterval(() => {
+      if (!complainOrder && !receiptOrder) loadOrders();
+    }, 5000);
     return () => clearInterval(id);
-  }, [customer, loadOrders]);
+  }, [customer, loadOrders, complainOrder, receiptOrder]);
 
   const applyCustomer = (c) => {
     setCustomer(c);
@@ -767,6 +769,7 @@ export default function CustomerView() {
       <AnimatePresence>
         {complainOrder && (
           <motion.div
+            key="complaint-modal"
             className="modal-wrap modal-wrap-motion"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -840,6 +843,7 @@ export default function CustomerView() {
       {receiptOrder && (
         <AnimatePresence>
           <motion.div
+            key="receipt-modal"
             className="modal-wrap modal-wrap-motion"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

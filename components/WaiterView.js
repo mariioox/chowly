@@ -141,9 +141,11 @@ export default function WaiterView() {
     (async () => {
       await loadActive();
     })();
-    const id = setInterval(() => loadActive(), 5000);
+    const id = setInterval(() => {
+      if (!orderDetail) loadActive();
+    }, 5000);
     return () => clearInterval(id);
-  }, []);
+  }, [orderDetail]);
 
   const openOrder = async (orderId) => {
     setOpenOrderId(orderId);
@@ -231,6 +233,7 @@ export default function WaiterView() {
       <AnimatePresence>
         {orderDetail && (
           <motion.div
+            key="order-modal"
             className="modal-wrap modal-wrap-motion"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
