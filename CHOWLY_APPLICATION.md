@@ -94,10 +94,12 @@ The story runs exactly as in the assignment, from menu to payment. Two presentat
 There is no login — the assignment explicitly says none is required. At the top right, a **medallion-style coin** shows the active role: **Guest** on one face and **Waiter** on the other. Clicking it spins it in 3D (framer-motion `rotateY` spring) and swaps the whole view beneath it in a cross-fade. One flip to go back and forth.
 
 ### Menu browsing
-A customer on the Guest face picks **who they are** from the seeded customers (Step 1) and chooses a **restaurant** (Step 2). The menu loads split into **Mains** and **Beverages** — 20 items per restaurant (13 food + 7 drinks; the rosemary lamb chops were removed from both venues), each item showing its name, price, and preparation time. Orders placed before the menu expansion are unaffected. A customer is not limited to the seeded list — an **"+ Add a new customer"** control in Step 1 registers a new diner (name required, phone and email optional), saves them to the database and immediately makes them the active customer.
+A customer on the Guest face is met by a compact **"Ordering as" bar** right under the header — a row of chips for the seeded customers (the active one is highlighted). Choosing a customer switches the whole session to them. Two tabs sit above the content: **Restaurants** and **My Order**. Picking a **restaurant** opens its menu split into **Mains** and **Beverages** — 20 items per restaurant (13 food + 7 drinks; the rosemary lamb chops were removed from both venues), each item showing its name, price, and preparation time. Orders placed before the menu expansion are unaffected. Customers are not limited to the seeded list — an **"+ Add"** chip in the ordering bar registers a new diner (name required, phone and email optional), saves them to the database and immediately makes them the active customer.
+
+If no customer is selected when a restaurant is opened, Chowly picks the first seeded customer for you and says so with a toast. The basket belongs to the restaurant you are browsing — switching to a different restaurant clears it and tells you, while browsing the same restaurant again keeps your items so you can keep adding.
 
 ### Order placement
-The customer taps **Add** on items. A live order summary appears (the cart) with each line item, the running total, and the estimated waiting time (the longest single-item prep time), plus the full **VAT breakdown** (Subtotal excl. VAT → VAT → Total incl. VAT). An optional **special request** field lets the customer note allergies or preferences, which is saved with the order and shown to the waiter. Tapping **Submit Order** creates the order, which is written to the database. The customer immediately sees an animated confirmation with their order id, the VAT breakdown, the waiting time and the total.
+Tapping **Add** on items fills the basket. As soon as the first item is added, an **always-on order drawer** slides in from the right with a per-item summary, the running total and the estimated waiting time (the longest single-item prep time) — and a **count badge** appears on the **My Order** tab. The drawer stays visible while you browse so you always know your total; on narrow screens it becomes a bottom sheet. The full cart lives in the **My Order** tab: each line item, the **VAT breakdown** (Subtotal excl. VAT → VAT → Total incl. VAT), an optional **special request** field (saved with the order and shown to the waiter), and the next-preparation estimate. Tapping **Submit Order** creates the order in the database, flips you to the **My Order** tab and scrolls you to the animated confirmation — order id, VAT breakdown, waiting time and total.
 
 ### Order assignment (waiter)
 As soon as the customer submits, the order is **assigned to a waiter** — the system picks the
@@ -128,9 +130,9 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
 ## 4. How to use it (walkthrough for a stranger)
 
 1. Open the deployed link. You land on the **Customer** view (Guest face).
-2. **Step 1** — pick a customer (e.g. "Ade Johnson").
-3. **Step 2** — choose a restaurant, e.g. **The Lekki Grill**.
-4. Add some items — e.g. Grilled Chicken and a Fresh Orange Juice. Watch your cart, the VAT breakdown and the estimate update. Optionally add a special request.
+2. In the **"Ordering as"** bar, pick a customer (e.g. "Ade Johnson") — or just open a restaurant and Chowly picks one for you.
+3. On the **Restaurants** tab, choose a restaurant, e.g. **The Lekki Grill**.
+4. Add some items — e.g. Grilled Chicken and a Fresh Orange Juice. The **order drawer** slides in and the **My Order** tab gets a count badge. Open **My Order** for the cart, the VAT breakdown and the estimate; optionally add a special request.
 5. Tap **Submit Order**. Note your order id, waiting time and the waiter auto-assigned to you.
 6. Flip the **medallion** in the top bar to **Waiter**.
 7. Your order is listed in the service queue as **Assigned to: <that waiter>**. Open it — the waiter

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import OrderTimeline from '@/components/OrderTimeline';
@@ -57,6 +57,8 @@ export default function CustomerView() {
   const receiptScrollRef = useKeepScroll();
 
   const [placing, setPlacing] = useState(false);
+  const [tab, setTab] = useState('restaurants');
+  const orderAnchorRef = useRef(null);
 
   const loadOrders = useCallback(async () => {
     try {
@@ -93,13 +95,41 @@ export default function CustomerView() {
     return () => clearInterval(id);
   }, [customer, loadOrders]);
 
+  const applyCustomer = (c) => {
+    setCustomer(c);
+    setCart({});
+    setRecentOrder(null);
+    setSelectedRestaurant(null);
+    setMenu([]);
+    setNotes('');
+  };
+
+  const changeCustomer = (c) => {
+    if (c.id === customer?.id) return;
+    applyCustomer(c);
+    toast(`Ordering as ${c.name} — basket cleared.`);
+  };
+
   const openRestaurant = async (r) => {
     if (!customer) {
-      toast('Pick the customer you are acting as first.');
-      return;
+      if (customers[0]) {
+        applyCustomer(customers[0]);
+        toast(`Ordering as ${customers[0].name}.`);
+      } else {
+        toast('Add a customer first.');
+        return;
+      }
+    }
+    if (
+      selectedRestaurant &&
+      selectedRestaurant.id !== r.id &&
+      Object.keys(cart).length > 0
+    ) {
+      setCart({});
+      toast('Basket cleared — you switched restaurant.');
     }
     setSelectedRestaurant(r);
-    setCart({});
+    setNotes('');
     try {
       const m = await getMenu(r.id);
       setMenu(m);
@@ -121,7 +151,7 @@ export default function CustomerView() {
     try {
       const created = await createCustomer({ name: newName, phone: newPhone, email: newEmail });
       setCustomers((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
-      setCustomer(created);
+      applyCustomer(created);
       setShowAddCustomer(false);
       setNewName('');
       setNewPhone('');
@@ -182,6 +212,11 @@ export default function CustomerView() {
       setNotes('');
       toast('Order placed! Waiting time ~' + waitingTime + ' mins');
       loadOrders();
+      setTab('order');
+      setTimeout(
+        () => orderAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        80
+      );
     } catch (e) {
       toast('Order failed: ' + e.message);
     } finally {
@@ -276,147 +311,198 @@ export default function CustomerView() {
         </p>
       </Reveal>
 
-      <Reveal delay={0.05}>
-        <div className="card u-pad u-mb24">
-          <span className="label">Step 1 — Who is the customer?</span>
-          <div className="customer-select">
+      {/* Who is ordering (compact) */}
+      <div className="customer-bar">
+        <div className="customer-bar-row">
+          <span className="customer-bar-label">Ordering as</span>
+          <div className="customer-chips">
             {customers.map((c) => (
               <button
                 key={c.id}
-                className={`customer-option ${customer?.id === c.id ? 'selected' : ''}`}
-                onClick={() => setCustomer(c)}
+                className={`customer-chip ${customer?.id === c.id ? 'selected' : ''}`}
+                onClick={() => changeCustomer(c)}
+                title={c.email || c.phone || c.name}
               >
                 <span className="nm">{c.name}</span>
-                <div className="em">{c.email}</div>
+                {customer?.id === c.id && <em>✓</em>}
               </button>
             ))}
-          </div>
-          <div className="customer-add">
-            <button className="btn btn-ghost" onClick={() => setShowAddCustomer((s) => !s)}>
-              {showAddCustomer ? 'Cancel' : '+ Add a new customer'}
+            <button
+              className={`customer-chip add ${showAddCustomer ? 'active' : ''}`}
+              onClick={() => setShowAddCustomer((s) => !s)}
+            >
+              {showAddCustomer ? 'Cancel' : '+ Add'}
             </button>
           </div>
-          <AnimatePresence>
-            {showAddCustomer && (
-              <motion.div
-                className="customer-form"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="customer-form-row">
-                  <input
-                    type="text"
-                    placeholder="Full name"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                  />
-                </div>
-                <div className="customer-form-row">
-                  <input
-                    type="text"
-                    placeholder="Phone (optional)"
-                    value={newPhone}
-                    onChange={(e) => setNewPhone(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Email (optional)"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                  />
-                </div>
-                <div className="customer-form-actions">
-                  <button className="btn btn-green" disabled={addingCustomer} onClick={saveNewCustomer}>
-                    {addingCustomer ? 'Adding…' : 'Add customer'}
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
-      </Reveal>
-
-      {/* Step 2: choose restaurant */}
-      <Reveal delay={0.1}>
-        <span className="label">Step 2 — Choose a restaurant</span>
-        <div className="restaurant-grid" style={{ marginBottom: 24 }}>
-          {restaurants.map((r) => (
-            <button
-              key={r.id}
-              className={`restaurant-card ${selectedRestaurant?.id === r.id ? 'selected' : ''}`}
-              onClick={() => openRestaurant(r)}
+        <AnimatePresence>
+          {showAddCustomer && (
+            <motion.div
+              className="customer-bar-form"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="restaurant-img-wrap">
-                <ImageWithFallback
-                  className="restaurant-img"
-                  src={r.image_url}
-                  alt={r.name}
-                  fallbackText={r.name.charAt(0)}
-                  width={900}
-                  height={720}
+              <div className="customer-form-row">
+                <input
+                  type="text"
+                  placeholder="Full name"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
                 />
               </div>
-              <div className="restaurant-info">
-                <h3>{r.name}</h3>
-                <div className="addr">{r.address}</div>
+              <div className="customer-form-row">
+                <input
+                  type="text"
+                  placeholder="Phone (optional)"
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Email (optional)"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                />
               </div>
-            </button>
-          ))}
-        </div>
-      </Reveal>
-
-      {/* Step 3: menu + cart */}
-      {selectedRestaurant ? (
-        <div className="menu-layout">
-          <div>
-            <Reveal y={14}>
-              <div className="menu-head">
-                <h1 className="page-title">{selectedRestaurant.name} — Menu</h1>
-                <button className="btn btn-ghost" onClick={closeMenu}>
-                  ← Change restaurant
+              <div className="customer-form-actions">
+                <button className="btn btn-green" disabled={addingCustomer} onClick={saveNewCustomer}>
+                  {addingCustomer ? 'Adding…' : 'Add customer'}
                 </button>
               </div>
-              {!menu.length ? (
-                <div className="card empty">No menu items found for this restaurant.</div>
-              ) : (
-                <>
-                  <div className="menu-section">
-                    <h2>Mains</h2>
-                    {menu
-                      .filter((m) => m.item_type === 'Food')
-                      .map((item) => (
-                        <MenuItemRow
-                          key={item.id}
-                          item={item}
-                          qty={cart[item.id] || 0}
-                          add={add}
-                        />
-                      ))}
-                  </div>
-                  <div className="menu-section">
-                    <h2>Beverages</h2>
-                    {menu
-                      .filter((m) => m.item_type === 'Drink')
-                      .map((item) => (
-                        <MenuItemRow
-                          key={item.id}
-                          item={item}
-                          qty={cart[item.id] || 0}
-                          add={add}
-                        />
-                      ))}
-                  </div>
-                </>
-              )}
-            </Reveal>
-          </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-          <div className="cart card">
-            <h2>Your Order</h2>
+      {/* Tabs */}
+      <div className="role-tabs" role="tablist" aria-label="Customer sections">
+        <button
+          role="tab"
+          aria-selected={tab === 'restaurants'}
+          className={`tab ${tab === 'restaurants' ? 'active' : ''}`}
+          onClick={() => setTab('restaurants')}
+        >
+          Restaurants
+          {tab === 'restaurants' && (
+            <motion.span
+              layoutId="customer-tab"
+              className="tab-underline"
+              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+            />
+          )}
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === 'order'}
+          className={`tab ${tab === 'order' ? 'active' : ''}`}
+          onClick={() => setTab('order')}
+        >
+          My Order
+          {cartItems.reduce((s, it) => s + it.quantity, 0) > 0 && (
+            <span className="tab-badge">{cartItems.reduce((s, it) => s + it.quantity, 0)}</span>
+          )}
+          {tab === 'order' && (
+            <motion.span
+              layoutId="customer-tab"
+              className="tab-underline"
+              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+            />
+          )}
+        </button>
+      </div>
+
+      {/* Restaurants tab */}
+      {tab === 'restaurants' && !selectedRestaurant && (
+        <div className="restaurants-view">
+          <Reveal delay={0.05}>
+            <div className="restaurant-grid">
+              {restaurants.map((r) => (
+                <button
+                  key={r.id}
+                  className="restaurant-card"
+                  onClick={() => openRestaurant(r)}
+                >
+                  <div className="restaurant-img-wrap">
+                    <ImageWithFallback
+                      className="restaurant-img"
+                      src={r.image_url}
+                      alt={r.name}
+                      fallbackText={r.name.charAt(0)}
+                      width={900}
+                      height={720}
+                    />
+                  </div>
+                  <div className="restaurant-info">
+                    <h3>{r.name}</h3>
+                    <div className="addr">{r.address}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </Reveal>
+          <div className="card empty">
+            Pick a restaurant to open its menu — your basket follows you around.
+          </div>
+        </div>
+      )}
+
+      {/* Menu for the selected restaurant */}
+      {tab === 'restaurants' && selectedRestaurant && (
+        <div className="menu-layout">
+          <Reveal y={14}>
+            <div className="menu-head">
+              <h1 className="page-title">{selectedRestaurant.name} — Menu</h1>
+              <button className="btn btn-ghost" onClick={closeMenu}>
+                ← All restaurants
+              </button>
+            </div>
+            {!menu.length ? (
+              <div className="card empty">No menu items found for this restaurant.</div>
+            ) : (
+              <>
+                <div className="menu-section">
+                  <h2>Mains</h2>
+                  {menu
+                    .filter((m) => m.item_type === 'Food')
+                    .map((item) => (
+                      <MenuItemRow
+                        key={item.id}
+                        item={item}
+                        qty={cart[item.id] || 0}
+                        add={add}
+                      />
+                    ))}
+                </div>
+                <div className="menu-section">
+                  <h2>Beverages</h2>
+                  {menu
+                    .filter((m) => m.item_type === 'Drink')
+                    .map((item) => (
+                      <MenuItemRow
+                        key={item.id}
+                        item={item}
+                        qty={cart[item.id] || 0}
+                        add={add}
+                      />
+                    ))}
+                </div>
+              </>
+            )}
+          </Reveal>
+        </div>
+      )}
+
+      {/* My Order tab */}
+      {tab === 'order' && (
+        <div className="orders-view" ref={orderAnchorRef}>
+          <div className="cart card u-mb24">
+            <h2>Your Order{selectedRestaurant ? ' — ' + selectedRestaurant.name : ''}</h2>
             {cartItems.length === 0 ? (
-              <div className="empty">No items yet. Add some from the menu.</div>
+              <div className="empty">
+                Nothing in the basket yet. Add items from a restaurant menu.
+              </div>
             ) : (
               <>
                 <AnimatePresence initial={false}>
@@ -474,91 +560,136 @@ export default function CustomerView() {
               </>
             )}
           </div>
+
+          <AnimatePresence>
+            {recentOrder && (
+              <motion.div
+                className="card confirm-card u-pad u-mt32"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <span className="badge placed">Order placed</span>
+                <h2 style={{ margin: '8px 0' }}>Order {shortId(recentOrder.id)}</h2>
+                <p>
+                  Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
+                  <strong>{fmt(recentOrder.total_amount)}</strong>
+                </p>
+                {recentOrder.waiter_staff?.name && (
+                  <p className="note">
+                    Your waiter: <strong>{recentOrder.waiter_staff.name}</strong>
+                  </p>
+                )}
+                <div className="confirm-sum">
+                  <div className="line">
+                    <span>Subtotal (excl. VAT)</span>
+                    <span>
+                      {fmt(
+                        recentOrder.total_amount -
+                          (recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)
+                      )}
+                    </span>
+                  </div>
+                  <div className="line vat-line">
+                    <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
+                    <span>{fmt(recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)}</span>
+                  </div>
+                  <div className="line confirm-total">
+                    <span>Total incl. VAT</span>
+                    <strong>{fmt(recentOrder.total_amount)}</strong>
+                  </div>
+                </div>
+                <p className="note">
+                  Track it live below — flip the medallion to the Waiter view to start prep.
+                </p>
+                {recentOrder.notes && (
+                  <p className="note request-note">Request: {recentOrder.notes}</p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <Reveal y={16}>
+            <h1 className="page-title u-mt32">Your Orders</h1>
+            <p className="page-sub">Live status updates (refreshes automatically).</p>
+          </Reveal>
+          {trackingOrders.length === 0 ? (
+            <div className="card empty">
+              No orders yet for {customer ? customer.name : 'this customer'}.
+            </div>
+          ) : (
+            <div className="order-grid">
+              <AnimatePresence initial={false}>
+                {trackingOrders.map((o) => (
+                  <motion.div
+                    key={o.id}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <OrderCard
+                      order={o}
+                      statusLabel={statusLabel}
+                      fmt={fmt}
+                      now={now}
+                      onComplain={() => openComplain(o)}
+                      onPay={() => pay(o)}
+                      onViewReceipt={() => viewReceipt(o)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="card empty">Choose a restaurant above to see its menu.</div>
       )}
 
-      {/* Confirmation of placed order */}
+      {/* Always-on order drawer */}
       <AnimatePresence>
-        {recentOrder && (
+        {cartItems.length > 0 && tab !== 'order' && (
           <motion.div
-            className="card confirm-card u-pad u-mt32"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="order-drawer"
+            initial={{ x: 400 }}
+            animate={{ x: 0 }}
+            exit={{ x: 400 }}
+            transition={{ type: 'spring', stiffness: 280, damping: 32 }}
           >
-            <span className="badge placed">Order placed</span>
-            <h2 style={{ margin: '8px 0' }}>Order {shortId(recentOrder.id)}</h2>
-            <p>
-              Waiting time: <strong>~{recentOrder.waiting_time} mins</strong> · Total:{' '}
-              <strong>{fmt(recentOrder.total_amount)}</strong>
-            </p>
-            {recentOrder.waiter_staff?.name && (
-              <p className="note">
-                Your waiter: <strong>{recentOrder.waiter_staff.name}</strong>
-              </p>
-            )}
-            <div className="confirm-sum">
-              <div className="line">
-                <span>Subtotal (excl. VAT)</span>
-                <span>
-                  {fmt(
-                    recentOrder.total_amount -
-                      (recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)
-                  )}
-                </span>
-              </div>
-              <div className="line vat-line">
-                <span>VAT ({Math.round(VAT_RATE * 100)}%)</span>
-                <span>{fmt(recentOrder.vat_amount ?? splitVat(recentOrder.total_amount).vat)}</span>
-              </div>
-              <div className="line confirm-total">
-                <span>Total incl. VAT</span>
-                <strong>{fmt(recentOrder.total_amount)}</strong>
-              </div>
+            <div className="drawer-head">
+              <span className="label">Your Order</span>
+              <button className="drawer-cta" onClick={() => setTab('order')}>
+                View & submit →
+              </button>
             </div>
-            <p className="note">
-              Track it live below — flip the medallion to the Waiter view to start prep.
-            </p>
-            {recentOrder.notes && (
-              <p className="note request-note">Request: {recentOrder.notes}</p>
-            )}
+            <div className="drawer-lines">
+              <AnimatePresence initial={false}>
+                {cartItems.map((it) => {
+                  const item = menu.find((m) => m.id === it.menu_item_id);
+                  return (
+                    <motion.div
+                      className="line"
+                      key={it.menu_item_id}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+                      transition={{ duration: 0.22 }}
+                    >
+                      <span>
+                        {item?.name ?? 'Item'} ×{it.quantity}
+                      </span>
+                      <span>{fmt(it.subtotal)}</span>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+            <div className="total">
+              <span>Total incl. VAT</span>
+              <strong>{fmt(totalAmount)}</strong>
+            </div>
+            <div className="note">Est. waiting ~{waitingTime} mins</div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Tracking / orders */}
-      <Reveal y={16}>
-        <h1 className="page-title u-mt32">Your Orders</h1>
-        <p className="page-sub">Live status updates (refreshes automatically).</p>
-      </Reveal>
-      {trackingOrders.length === 0 ? (
-        <div className="card empty">No orders yet for {customer ? customer.name : 'this customer'}.</div>
-      ) : (
-        <div className="order-grid">
-          <AnimatePresence initial={false}>
-            {trackingOrders.map((o) => (
-              <motion.div
-                key={o.id}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <OrderCard
-                  order={o}
-                  statusLabel={statusLabel}
-                  fmt={fmt}
-                  now={now}
-                  onComplain={() => openComplain(o)}
-                  onPay={() => pay(o)}
-                  onViewReceipt={() => viewReceipt(o)}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
 
       {/* Complaint modal */}
       <AnimatePresence>
