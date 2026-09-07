@@ -110,7 +110,7 @@ create table payments (
 -- ---------- SEED DATA ----------
 -- Restaurants
 insert into restaurants values
- ('R001','Chowly Grill','12 Admiralty Way, Lekki','08012345678','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=720&fit=crop'),
+ ('R001','The Lekki Grill','12 Admiralty Way, Lekki','08012345678','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=720&fit=crop'),
  ('R002','Terra Kulture Restaurant','1 Tiamiyu Savage, VI','08023456789','https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&h=720&fit=crop');
 
 -- Customers
@@ -223,3 +223,8 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M222','R002','Iced Latte','Double espresso, chilled milk poured over ice','Drink',5000,4,'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop'),
  ('M223','R002','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop')
 on conflict (id) do nothing;
+
+-- Rename the seed restaurant to a venue that does not share the platform brand.
+-- "Chowly" is the platform name; this keeps the two restaurants distinct from it.
+-- Safe to re-run on a live database (it targets one row by id, no-op if absent).
+update restaurants set name = 'The Lekki Grill' where id = 'R001' and name = 'Chowly Grill';

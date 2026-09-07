@@ -129,7 +129,7 @@ All of the above is saved in Supabase, so refreshing the page keeps every order,
 
 1. Open the deployed link. You land on the **Customer** view (Guest face).
 2. **Step 1** — pick a customer (e.g. "Ade Johnson").
-3. **Step 2** — choose a restaurant, e.g. **Chowly Grill**.
+3. **Step 2** — choose a restaurant, e.g. **The Lekki Grill**.
 4. Add some items — e.g. Grilled Chicken and a Fresh Orange Juice. Watch your cart, the VAT breakdown and the estimate update. Optionally add a special request.
 5. Tap **Submit Order**. Note your order id, waiting time and the waiter auto-assigned to you.
 6. Flip the **medallion** in the top bar to **Waiter**.
