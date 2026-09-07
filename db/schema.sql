@@ -130,6 +130,18 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M107','R001','Grilled Salmon','Seared salmon fillet, lemon butter, fresh herbs','Food',26500,22,'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=400&fit=crop'),
  ('M109','R001','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
  ('M111','R001','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop'),
+ ('M112','R001','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M113','R001','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ ('M114','R001','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
+ ('M115','R001','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
+ ('M116','R001','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M117','R001','Chicken Curry & Rice','Coconut chicken curry, jasmine rice, fresh coriander','Food',16500,17,'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=400&fit=crop'),
+ ('M118','R001','Crispy Fried Wings','Double-fried wings, honey-garlic glaze, sesame seeds','Food',12000,12,'https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&h=400&fit=crop'),
+ ('M119','R001','Sparkling Water','Chilled sparkling water with a twist of lime','Drink',3000,1,'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&h=400&fit=crop'),
+ ('M120','R001','Mango Smoothie','Fresh mango blended with yoghurt and mint','Drink',6000,5,'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&h=400&fit=crop'),
+ ('M121','R001','Chapman','Classic Nigerian mocktail: citrus, grenadine, bitters','Drink',5500,6,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
+ ('M122','R001','Iced Latte','Double espresso, chilled milk poured over ice','Drink',5000,4,'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop'),
+ ('M123','R001','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop'),
  ('M201','R002','BBQ Beef Ribs','Slow-cooked beef ribs, sticky barbecue glaze, smoky char','Food',24500,20,'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=400&fit=crop'),
  ('M202','R002','Grilled Chicken','Marinated grilled chicken, charred edges, garlic herb butter','Food',18500,18,'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=400&fit=crop'),
  ('M203','R002','Classic Beef Burger','100% beef patty, melted cheddar, lettuce, tomato, house sauce','Food',15500,12,'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop'),
@@ -138,7 +150,19 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M206','R002','Pepper Soup','Spicy peppery broth, tender meat, native herbs, warming heat','Food',12000,20,'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=400&fit=crop'),
  ('M207','R002','Grilled Salmon','Seared salmon fillet, lemon butter, fresh herbs','Food',26500,22,'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=400&fit=crop'),
  ('M209','R002','Fresh Orange Juice','Hand-squeezed oranges, ice cold','Drink',4500,3,'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop'),
- ('M211','R002','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop');
+ ('M211','R002','Coca-Cola','Ice-cold classic served with lemon','Drink',2500,2,'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop'),
+ ('M212','R002','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M213','R002','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ ('M214','R002','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
+ ('M215','R002','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
+ ('M216','R002','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M217','R002','Chicken Curry & Rice','Coconut chicken curry, jasmine rice, fresh coriander','Food',16500,17,'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=400&fit=crop'),
+ ('M218','R002','Crispy Fried Wings','Double-fried wings, honey-garlic glaze, sesame seeds','Food',12000,12,'https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&h=400&fit=crop'),
+ ('M219','R002','Sparkling Water','Chilled sparkling water with a twist of lime','Drink',3000,1,'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&h=400&fit=crop'),
+ ('M220','R002','Mango Smoothie','Fresh mango blended with yoghurt and mint','Drink',6000,5,'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&h=400&fit=crop'),
+ ('M221','R002','Chapman','Classic Nigerian mocktail: citrus, grenadine, bitters','Drink',5500,6,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
+ ('M222','R002','Iced Latte','Double espresso, chilled milk poured over ice','Drink',5000,4,'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop'),
+ ('M223','R002','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop');
 
 -- Staff
 insert into staff (id,restaurant_id,name,role,phone) values
@@ -165,3 +189,37 @@ alter table orders           disable row level security;
 alter table order_items      disable row level security;
 alter table complaints       disable row level security;
 alter table payments         disable row level security;
+
+-- ---------- LIVE UPGRADE ----------
+-- The menus were expanded AFTER the deployed database already had orders, so the
+-- destructive create-and-seed above cannot be re-run on a live database (it would
+-- drop the tables and lose the existing data). If you applied the base schema
+-- before this expansion, run ONLY this block in the Supabase SQL Editor. It adds the
+-- new menu items without touching any existing rows. Fresh databases get the full
+-- menu automatically from the seed above and never need this block.
+insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_time_mins,image_url) values
+ ('M112','R001','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M113','R001','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ ('M114','R001','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
+ ('M115','R001','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
+ ('M116','R001','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M117','R001','Chicken Curry & Rice','Coconut chicken curry, jasmine rice, fresh coriander','Food',16500,17,'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=400&fit=crop'),
+ ('M118','R001','Crispy Fried Wings','Double-fried wings, honey-garlic glaze, sesame seeds','Food',12000,12,'https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&h=400&fit=crop'),
+ ('M119','R001','Sparkling Water','Chilled sparkling water with a twist of lime','Drink',3000,1,'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&h=400&fit=crop'),
+ ('M120','R001','Mango Smoothie','Fresh mango blended with yoghurt and mint','Drink',6000,5,'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&h=400&fit=crop'),
+ ('M121','R001','Chapman','Classic Nigerian mocktail: citrus, grenadine, bitters','Drink',5500,6,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
+ ('M122','R001','Iced Latte','Double espresso, chilled milk poured over ice','Drink',5000,4,'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop'),
+ ('M123','R001','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop'),
+ ('M212','R002','Beef Shish Kebab','Char-grilled beef skewers, red onion, smoky spice rub','Food',14000,20,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M213','R002','Rosemary Lamb Chops','Pan-seared lamb chops, rosemary jus, crushed potatoes','Food',28000,22,'https://images.unsplash.com/photo-1511300636408-a63a89df3482?w=400&h=400&fit=crop'),
+ ('M214','R002','Jollof Rice & Grilled Tilapia','Smoky party jollof, whole grilled tilapia, fried plantain','Food',16000,18,'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop'),
+ ('M215','R002','Cajun Shrimp Pasta','Blackened shrimp, creamy cajun sauce, tagliatelle','Food',21500,15,'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=400&fit=crop'),
+ ('M216','R002','Suya Skewers','Spiced beef suya, yaji rub, sliced onions and tomatoes','Food',11000,16,'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=400&fit=crop'),
+ ('M217','R002','Chicken Curry & Rice','Coconut chicken curry, jasmine rice, fresh coriander','Food',16500,17,'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=400&fit=crop'),
+ ('M218','R002','Crispy Fried Wings','Double-fried wings, honey-garlic glaze, sesame seeds','Food',12000,12,'https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&h=400&fit=crop'),
+ ('M219','R002','Sparkling Water','Chilled sparkling water with a twist of lime','Drink',3000,1,'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&h=400&fit=crop'),
+ ('M220','R002','Mango Smoothie','Fresh mango blended with yoghurt and mint','Drink',6000,5,'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&h=400&fit=crop'),
+ ('M221','R002','Chapman','Classic Nigerian mocktail: citrus, grenadine, bitters','Drink',5500,6,'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=400&fit=crop'),
+ ('M222','R002','Iced Latte','Double espresso, chilled milk poured over ice','Drink',5000,4,'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop'),
+ ('M223','R002','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop')
+on conflict (id) do nothing;
