@@ -94,7 +94,7 @@ The story runs exactly as in the assignment, from menu to payment. Two presentat
 There is no login — the assignment explicitly says none is required. At the top right, a **medallion-style coin** shows the active role: **Guest** on one face and **Waiter** on the other. Clicking it spins it in 3D (framer-motion `rotateY` spring) and swaps the whole view beneath it in a cross-fade. One flip to go back and forth.
 
 ### Menu browsing
-A customer on the Guest face picks **who they are** from the seeded customers (Step 1) and chooses a **restaurant** (Step 2). The restaurant's menu loads split into **Mains** and **Beverages**, each item showing its name, price, and preparation time.
+A customer on the Guest face picks **who they are** from the seeded customers (Step 1) and chooses a **restaurant** (Step 2). The menu loads split into **Mains** and **Beverages** — 21 items per restaurant (14 food + 7 drinks), each item showing its name, price, and preparation time. Orders placed before the menu expansion are unaffected.
 
 ### Order placement
 The customer taps **Add** on items. A live order summary appears (the cart) with each line item, the running total, and the estimated waiting time (the longest single-item prep time), plus the full **VAT breakdown** (Subtotal excl. VAT → VAT → Total incl. VAT). An optional **special request** field lets the customer note allergies or preferences, which is saved with the order and shown to the waiter. Tapping **Submit Order** creates the order, which is written to the database. The customer immediately sees an animated confirmation with their order id, the VAT breakdown, the waiting time and the total.
