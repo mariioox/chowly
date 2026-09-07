@@ -10,8 +10,20 @@
 --      can be computed (Req #1 stores a preparation time).
 --   3. `status` on orders drives the whole story:
 --      placed -> being_prepared -> served -> paid.
+--
+-- CONTENTS
+--   1. TEARDOWN   - drop everything, dependency-first (fresh start).
+--   2. TABLES     - 8 tables: restaurants, customers, menu_items, staff,
+--                  orders, order_items (M:M bridge), complaints, payments.
+--   3. SEED DATA  - restaurants, customers, menu (20 items each), staff.
+--   4. ACCESS     - RLS off so the browser key can read/write (no logins).
+--   5. LIVE UPGRADE - idempotent appendix for databases seeded before the
+--                  menu expansion; + final seed-restaurant rename. Fresh
+--                  databases never need this block (they are covered by
+--                  the seed above).
 -- =============================================================
 
+-- ---------- TEARDOWN ----------
 -- Drop in dependency-safe order (safe to re-run)
 drop table if exists payments;
 drop table if exists complaints;
@@ -21,6 +33,8 @@ drop table if exists staff;
 drop table if exists customers;
 drop table if exists menu_items;
 drop table if exists restaurants;
+
+-- ---------- TABLES ----------
 
 -- 1. RESTAURANT
 create table restaurants (
@@ -224,7 +238,8 @@ insert into menu_items (id,restaurant_id,name,description,item_type,price,prep_t
  ('M223','R002','House Red Wine','A smooth glass of the house merlot','Drink',18000,3,'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop')
 on conflict (id) do nothing;
 
--- Rename the seed restaurant to a venue that does not share the platform brand.
--- "Chowly" is the platform name; this keeps the two restaurants distinct from it.
--- Safe to re-run on a live database (it targets one row by id, no-op if absent).
+-- FINAL APPENDIX ITEM: rename the seed restaurant to a venue that does not share
+-- the platform brand. "Chowly" is the platform name; this keeps the two venues
+-- distinct from it. Idempotent and safe on a live database (targets one row by
+-- id, no-op if absent).
 update restaurants set name = 'The Lekki Grill' where id = 'R001' and name = 'Chowly Grill';
